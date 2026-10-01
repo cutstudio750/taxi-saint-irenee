@@ -11,7 +11,7 @@ compatibility_date = "2026-09-01"
 # Exemple : "https://www.taxi-saint-irenee.fr,https://votre-compte.github.io"
 ALLOWED_ORIGINS = "https://cutstudio750.github.io"
 # Adresse qui reçoit les demandes.
-BOOKING_TO_EMAIL = "taxisaintirenee@gmail.com"
+BOOKING_TO_EMAIL = "taxi.saintirenee@gmail.com"
 # Expéditeur. Pour tester sans domaine : "Taxi Saint Irénée <onboarding@resend.dev>"
 # (Resend n'autorise alors l'envoi QU'À l'adresse du compte Resend).
 # En production : une adresse d'un domaine vérifié chez Resend.
