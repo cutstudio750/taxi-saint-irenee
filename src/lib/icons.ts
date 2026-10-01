@@ -10,6 +10,9 @@ export const icons = {
   briefcase:
     '<rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3 12.5h18"/>',
   pin: '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z"/><circle cx="12" cy="10" r="2.25"/>',
+  medical: '<path d="M9.5 4.5h5v5h5v5h-5v5h-5v-5h-5v-5h5Z"/>',
+  document: '<path d="M14 3.5H7.5A1.5 1.5 0 0 0 6 5v14a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 18 19V7.5Z"/><path d="M14 3.5v4h4M9 12h6M9 15.5h6"/>',
+  card: '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 14.5h4"/>',
   family:
     '<circle cx="9" cy="8" r="2.75"/><path d="M3.5 19.5c.4-3.2 2.7-5.25 5.5-5.25s5.1 2.05 5.5 5.25"/><circle cx="16.75" cy="9.5" r="2.25"/><path d="M15.4 14.5c.4-.15.85-.25 1.35-.25 2.3 0 4.1 1.7 4.5 4.25"/>',
   route:

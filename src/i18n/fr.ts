@@ -10,6 +10,7 @@ export const fr = {
     how: 'experience',
     about: 'a-propos',
     services: 'services',
+    medical: 'transport-medical',
     vehicle: 'vehicule',
     trust: 'pourquoi',
     reviews: 'avis',
@@ -19,9 +20,9 @@ export const fr = {
   },
 
   meta: {
-    title: 'Taxi Saint Irénée — Taxi à Lyon depuis 2014',
+    title: 'Taxi Saint Irénée — Taxi conventionné à Lyon depuis 2014',
     description:
-      'Taxi à Lyon depuis 2014 : transferts aéroport et gares, trajets professionnels et privés en SUV Mercedes 7 places. Réservation en ligne ou au 06 61 88 27 07.',
+      'Taxi conventionné CPAM à Lyon depuis 2014 : transport médical, aéroport, gares, trajets privés et professionnels en SUV Mercedes 7 places. Réservation en ligne.',
     ogAlt: 'Taxi Saint Irénée — Taxi à Lyon depuis 2014',
   },
 
@@ -54,6 +55,7 @@ export const fr = {
   hero: {
     label: 'Taxi à Lyon',
     since: 'Depuis 2014',
+    cpam: 'Conventionné CPAM',
     titleA: 'Votre trajet à Lyon,',
     titleB: 'simplement.',
     lead: 'Un service de taxi professionnel pour vos déplacements privés et professionnels, à Lyon et dans sa région.',
@@ -95,8 +97,9 @@ export const fr = {
   services: {
     label: 'Services',
     title: 'Un taxi pour chaque déplacement.',
-    lead: 'Professionnels, familles, voyageurs : un même niveau d’attention, quel que soit le trajet.',
+    lead: 'Professionnels, familles, voyageurs, patients : un même niveau d’attention, quel que soit le trajet.',
     items: [
+      { icon: 'medical', title: 'Transport médical conventionné', text: 'Hôpitaux, cliniques, centres de soins : sur prescription, pris en charge par l’Assurance Maladie.' },
       { icon: 'plane', title: 'Transferts aéroport', text: 'Lyon-Saint Exupéry, au départ comme à l’arrivée.' },
       { icon: 'train', title: 'Transferts gare', text: 'Part-Dieu, Perrache, Saint-Exupéry TGV : vos trains, sans stress.' },
       { icon: 'briefcase', title: 'Déplacements professionnels', text: 'Rendez-vous, séminaires, accueil de collaborateurs ou de clients.' },
@@ -105,6 +108,26 @@ export const fr = {
       { icon: 'route', title: 'Trajets longue distance', text: 'Au-delà de la métropole, vers d’autres villes et régions, sur demande.' },
       { icon: 'clock', title: 'Mise à disposition', text: 'Un chauffeur et son véhicule réservés pour une durée définie, selon votre programme.' },
     ],
+    medical: {
+      label: 'Taxi conventionné CPAM',
+      title: 'Transport médical conventionné.',
+      text: 'Taxi Saint Irénée est conventionné par l’Assurance Maladie. Sur prescription médicale de transport, vos trajets vers un hôpital, une clinique, un centre de soins ou un cabinet médical peuvent être pris en charge.',
+      points: [
+        'Consultations, examens, hospitalisations et sorties d’hospitalisation',
+        'Allers-retours et transports réguliers pour des séances de soins',
+        'Prise en charge selon les conditions de l’Assurance Maladie : le chauffeur vous renseigne sur les modalités lors de la confirmation',
+      ],
+      bringTitle: 'À prévoir',
+      bring: [
+        { icon: 'document', title: 'Prescription médicale de transport', text: 'Établie par votre médecin avant le trajet, sauf urgence.' },
+        { icon: 'card', title: 'Carte Vitale', text: 'Ou votre attestation de droits à jour.' },
+        { icon: 'card', title: 'Carte de complémentaire santé', text: 'Le cas échéant.' },
+      ],
+      note: 'Certains transports (longue distance, transports en série éloignés) nécessitent un accord préalable de l’Assurance Maladie : votre médecin vous l’indique.',
+      cta: 'Réserver un transport médical',
+      ameli: 'Conditions de prise en charge sur ameli.fr',
+      ameliUrl: 'https://www.ameli.fr/assure/remboursements/rembourse/frais-transport',
+    },
   },
 
   vehicle: {
@@ -139,6 +162,7 @@ export const fr = {
     items: [
       { title: 'Depuis 2014', text: 'Plus de dix ans d’activité à Lyon.' },
       { title: 'Service local', text: 'Une entreprise lyonnaise qui connaît la ville et ses accès.' },
+      { title: 'Taxi conventionné CPAM', text: 'Conventionné par l’Assurance Maladie pour le transport de patients sur prescription.' },
       { title: 'Réservation à l’avance', text: 'Planifiez votre trajet ; le chauffeur confirme la prise en charge.' },
       { title: 'Service professionnel', text: 'Un interlocuteur joignable et des échanges clairs.' },
       { title: 'Véhicule 7 places', text: 'De la place pour les passagers comme pour les bagages.' },
@@ -183,6 +207,14 @@ export const fr = {
         a: 'Non. Le formulaire transmet une demande. Le chauffeur revient vers vous pour confirmer sa disponibilité et les détails de la prise en charge.',
       },
       {
+        q: 'Êtes-vous un taxi conventionné CPAM ?',
+        a: 'Oui. Taxi Saint Irénée est conventionné par l’Assurance Maladie : sur prescription médicale de transport, vos trajets vers un établissement de santé peuvent être pris en charge. Choisissez « Transport médical » dans le formulaire de réservation ; le chauffeur vous précise les modalités lors de la confirmation.',
+      },
+      {
+        q: 'Que faut-il prévoir pour un transport médical ?',
+        a: 'Une prescription médicale de transport établie par votre médecin avant le trajet (sauf urgence) et votre carte Vitale. Certains transports nécessitent aussi un accord préalable de l’Assurance Maladie : votre médecin vous l’indique.',
+      },
+      {
         q: 'Combien de passagers pouvez-vous transporter ?',
         a: 'Le véhicule dispose de 7 places. Indiquez le nombre de passagers et de bagages lors de votre demande afin que la prise en charge soit adaptée.',
       },
@@ -212,7 +244,7 @@ export const fr = {
   },
 
   footer: {
-    tagline: 'Taxi à Lyon depuis 2014.',
+    tagline: 'Taxi conventionné CPAM à Lyon depuis 2014.',
     home: 'Accueil',
     services: 'Services',
     vehicle: 'Véhicule',
@@ -343,6 +375,50 @@ export const fr = {
     callInstead: 'Appeler le 06 61 88 27 07',
     emailInstead: 'Envoyer par email',
     noscript: 'La réservation en ligne nécessite JavaScript. Joignez-nous au 06 61 88 27 07 ou à taxisaintirenee@gmail.com.',
+
+    mode: {
+      legend: 'Type de trajet',
+      standard: 'Trajet classique',
+      medical: 'Transport médical',
+      medicalSub: 'Conventionné CPAM',
+      medicalNote: 'Sur prescription médicale de transport. Aucune information sur votre santé ne vous sera demandée.',
+    },
+
+    medical: {
+      hospitals: 'Établissements de santé',
+      timeLabel: 'Heure du rendez-vous',
+      timeHint: 'Le chauffeur fixe l’heure de prise en charge en fonction de votre rendez-vous.',
+      roundTrip: 'Aller-retour',
+      roundTripHint: 'Le chauffeur vous ramène après votre rendez-vous.',
+      returnTime: 'Heure de retour',
+      returnTimeHint: 'Si elle est connue. Sinon, vous conviendrez de l’heure avec le chauffeur.',
+      stepKicker: 'Transport médical',
+      stepTitle: 'Votre transport',
+      prescription: 'Prescription médicale de transport',
+      prescriptionYes: 'Oui, je l’ai',
+      prescriptionPending: 'Elle me sera remise',
+      prescriptionNo: 'Je n’en ai pas',
+      prescriptionNoNotice: 'Sans prescription médicale de transport, le trajet ne peut pas être pris en charge par l’Assurance Maladie. Il reste possible en trajet classique, à vos frais.',
+      recurring: 'Il s’agit de transports réguliers (séances de soins)',
+      recurringHint: 'Le chauffeur pourra organiser l’ensemble des trajets avec vous.',
+      passengersHint: 'Patient et accompagnant(s), jusqu’à 7 places',
+      messagePh: 'Service ou bâtiment, point de rendez-vous précis… Merci de ne pas indiquer d’information sur votre état de santé.',
+      consentA: 'J’accepte que ces informations, y compris le fait qu’il s’agit d’un transport médical, soient utilisées pour organiser mon transport, conformément à la ',
+      reminder: 'Le jour du transport, munissez-vous de votre prescription médicale de transport et de votre carte Vitale.',
+      summaryTitle: 'Transport médical',
+      summaryType: 'Transport médical conventionné CPAM',
+      prescriptionSummary: 'Prescription : {value}',
+      oneWay: 'Aller simple',
+      roundTripAt: 'Aller-retour, retour vers {time}',
+      roundTripTbd: 'Aller-retour, heure de retour à définir',
+      recurringSummary: 'Transports réguliers',
+      appointmentAt: 'rendez-vous à',
+      calendarTitle: 'Taxi Saint Irénée — transport médical à confirmer',
+      errors: {
+        prescription: 'Indiquez si vous disposez d’une prescription médicale de transport.',
+        returnTime: 'L’heure de retour doit être postérieure à l’heure du rendez-vous.',
+      },
+    },
   },
 
   notFound: {

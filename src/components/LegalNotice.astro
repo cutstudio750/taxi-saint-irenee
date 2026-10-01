@@ -29,6 +29,7 @@ const v = (x: string) => x || null;
     <div><dt>SIRET</dt><dd>{v(L.siret) ?? <span class="todo">{todo}</span>}</dd></div>
     {L.vatNumber && <div><dt>{fr ? 'TVA intracommunautaire' : 'VAT number'}</dt><dd>{L.vatNumber}</dd></div>}
     {L.taxiLicence && <div><dt>{fr ? 'Autorisation de stationnement' : 'Taxi licence'}</dt><dd>{L.taxiLicence}</dd></div>}
+    <div><dt>{fr ? 'Conventionnement' : 'Health insurance approval'}</dt><dd>{fr ? 'Taxi conventionné par l’Assurance Maladie (CPAM)' : 'Taxi approved by French national health insurance (CPAM)'}{L.cpamConvention && ` — n° ${L.cpamConvention}`}</dd></div>
     <div><dt>{fr ? 'Téléphone' : 'Phone'}</dt><dd><a href={site.phone.href}>{fr ? site.phone.display : site.phone.international}</a></dd></div>
     <div><dt>Email</dt><dd><a href={`mailto:${site.email}`}>{site.email}</a></dd></div>
     <div><dt>{fr ? 'Directeur de la publication' : 'Publication director'}</dt><dd>{v(L.publicationDirector) ?? <span class="todo">{todo}</span>}</dd></div>

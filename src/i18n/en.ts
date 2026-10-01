@@ -12,6 +12,7 @@ export const en: Dict = {
     how: 'experience',
     about: 'about',
     services: 'services',
+    medical: 'medical-transport',
     vehicle: 'vehicle',
     trust: 'why-us',
     reviews: 'reviews',
@@ -23,7 +24,7 @@ export const en: Dict = {
   meta: {
     title: 'Taxi Saint Irénée — Lyon Taxi Since 2014',
     description:
-      'Lyon private taxi since 2014: airport and station transfers, business and private trips in a 7-seater Mercedes SUV. Book online or call +33 6 61 88 27 07.',
+      'Lyon private taxi since 2014, approved for medical transport (CPAM): airport, stations, business and private trips in a 7-seater Mercedes SUV. Book online.',
     ogAlt: 'Taxi Saint Irénée — Lyon taxi since 2014',
   },
 
@@ -56,6 +57,7 @@ export const en: Dict = {
   hero: {
     label: 'Taxi in Lyon',
     since: 'Since 2014',
+    cpam: 'CPAM-approved',
     titleA: 'Your ride in Lyon,',
     titleB: 'made simple.',
     lead: 'A professional taxi service for private and business travel, in Lyon and the surrounding region.',
@@ -97,8 +99,9 @@ export const en: Dict = {
   services: {
     label: 'Services',
     title: 'A taxi for every journey.',
-    lead: 'Business travellers, families, visitors: the same level of care, whatever the trip.',
+    lead: 'Business travellers, families, visitors, patients: the same level of care, whatever the trip.',
     items: [
+      { icon: 'medical', title: 'Approved medical transport', text: 'Hospitals, clinics, care centres: with a prescription, covered by French national health insurance.' },
       { icon: 'plane', title: 'Airport transfers', text: 'Lyon-Saint Exupéry, for departures and arrivals.' },
       { icon: 'train', title: 'Train station transfers', text: 'Part-Dieu, Perrache, Saint-Exupéry TGV: catch your train, stress-free.' },
       { icon: 'briefcase', title: 'Business travel', text: 'Meetings, seminars, welcoming colleagues or clients.' },
@@ -107,6 +110,26 @@ export const en: Dict = {
       { icon: 'route', title: 'Long-distance trips', text: 'Beyond the Lyon area, to other cities and regions, on request.' },
       { icon: 'clock', title: 'Hourly hire', text: 'A driver and vehicle booked for a set time, around your schedule.' },
     ],
+    medical: {
+      label: 'CPAM-approved taxi',
+      title: 'Approved medical transport.',
+      text: 'Taxi Saint Irénée is approved (conventionné) by French national health insurance (Assurance Maladie). With a medical transport prescription, your trips to a hospital, clinic, care centre or doctor’s practice can be covered.',
+      points: [
+        'Consultations, tests, hospital admissions and discharges',
+        'Return trips and regular transport for treatment sessions',
+        'Coverage under Assurance Maladie conditions: your driver explains the arrangements when confirming',
+      ],
+      bringTitle: 'What to bring',
+      bring: [
+        { icon: 'document', title: 'Medical transport prescription', text: 'Issued by your doctor before the trip, except in emergencies.' },
+        { icon: 'card', title: 'Carte Vitale', text: 'Or an up-to-date certificate of entitlement.' },
+        { icon: 'card', title: 'Supplementary health insurance card', text: 'If applicable.' },
+      ],
+      note: 'Some trips (long distance, distant repeated transport) require prior approval from Assurance Maladie: your doctor will tell you.',
+      cta: 'Book medical transport',
+      ameli: 'Coverage conditions on ameli.fr (in French)',
+      ameliUrl: 'https://www.ameli.fr/assure/remboursements/rembourse/frais-transport',
+    },
   },
 
   vehicle: {
@@ -141,6 +164,7 @@ export const en: Dict = {
     items: [
       { title: 'Since 2014', text: 'More than ten years of service in Lyon.' },
       { title: 'Local service', text: 'A Lyon business that knows the city and how to get around it.' },
+      { title: 'CPAM-approved taxi', text: 'Approved by French national health insurance to transport patients with a prescription.' },
       { title: 'Advance booking', text: 'Plan your ride; your driver confirms the pick-up.' },
       { title: 'Professional service', text: 'Someone you can reach, and clear communication.' },
       { title: '7-seater vehicle', text: 'Room for passengers and luggage alike.' },
@@ -185,6 +209,14 @@ export const en: Dict = {
         a: 'No. The form sends a request. Your driver gets back to you to confirm availability and the pick-up details.',
       },
       {
+        q: 'Are you a CPAM-approved taxi?',
+        a: 'Yes. Taxi Saint Irénée is approved by French national health insurance (Assurance Maladie): with a medical transport prescription, your trips to a healthcare facility can be covered. Choose “Medical transport” in the booking form; your driver explains the arrangements when confirming.',
+      },
+      {
+        q: 'What do I need for medical transport?',
+        a: 'A medical transport prescription issued by your doctor before the trip (except in emergencies) and your carte Vitale. Some trips also require prior approval from Assurance Maladie: your doctor will tell you.',
+      },
+      {
         q: 'How many passengers can you carry?',
         a: 'The vehicle has 7 seats. Let us know the number of passengers and pieces of luggage in your request so the pick-up can be arranged accordingly.',
       },
@@ -214,7 +246,7 @@ export const en: Dict = {
   },
 
   footer: {
-    tagline: 'Taxi in Lyon since 2014.',
+    tagline: 'CPAM-approved taxi in Lyon since 2014.',
     home: 'Home',
     services: 'Services',
     vehicle: 'Vehicle',
@@ -345,6 +377,50 @@ export const en: Dict = {
     callInstead: 'Call +33 6 61 88 27 07',
     emailInstead: 'Send by email',
     noscript: 'Online booking requires JavaScript. Call us on +33 6 61 88 27 07 or email taxisaintirenee@gmail.com.',
+
+    mode: {
+      legend: 'Type of trip',
+      standard: 'Standard ride',
+      medical: 'Medical transport',
+      medicalSub: 'CPAM-approved',
+      medicalNote: 'With a medical transport prescription. You will not be asked anything about your health.',
+    },
+
+    medical: {
+      hospitals: 'Healthcare facilities',
+      timeLabel: 'Appointment time',
+      timeHint: 'Your driver sets the pick-up time based on your appointment.',
+      roundTrip: 'Return trip',
+      roundTripHint: 'Your driver takes you back after your appointment.',
+      returnTime: 'Return time',
+      returnTimeHint: 'If known. Otherwise, you will agree on the time with your driver.',
+      stepKicker: 'Medical transport',
+      stepTitle: 'Your transport',
+      prescription: 'Medical transport prescription',
+      prescriptionYes: 'Yes, I have it',
+      prescriptionPending: 'I will receive it',
+      prescriptionNo: 'I don’t have one',
+      prescriptionNoNotice: 'Without a medical transport prescription, the trip cannot be covered by Assurance Maladie. It is still possible as a standard ride, at your own expense.',
+      recurring: 'These are regular trips (treatment sessions)',
+      recurringHint: 'Your driver can arrange all the trips with you.',
+      passengersHint: 'Patient and companion(s), up to 7 seats',
+      messagePh: 'Department or building, exact meeting point… Please do not include any information about your health.',
+      consentA: 'I agree that this information, including the fact that this is medical transport, may be used to arrange my transport, in accordance with the ',
+      reminder: 'On the day, please bring your medical transport prescription and your carte Vitale.',
+      summaryTitle: 'Medical transport',
+      summaryType: 'CPAM-approved medical transport',
+      prescriptionSummary: 'Prescription: {value}',
+      oneWay: 'One way',
+      roundTripAt: 'Return trip, back around {time}',
+      roundTripTbd: 'Return trip, return time to be agreed',
+      recurringSummary: 'Regular trips',
+      appointmentAt: 'appointment at',
+      calendarTitle: 'Taxi Saint Irénée — medical transport to be confirmed',
+      errors: {
+        prescription: 'Please say whether you have a medical transport prescription.',
+        returnTime: 'The return time must be after the appointment time.',
+      },
+    },
   },
 
   notFound: {

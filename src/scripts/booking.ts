@@ -1,10 +1,15 @@
 /**
- * Réservation — parcours progressif en 5 étapes.
+ * Réservation — parcours progressif en 5 étapes, en deux modes :
+ *  - trajet classique ;
+ *  - transport médical conventionné (CPAM) : heure de rendez-vous, aller-retour,
+ *    prescription médicale de transport, transports réguliers. Aucune donnée de santé demandée.
  *
  * Services externes (gratuits, sans clé, opérés par l'IGN / Géoplateforme) :
  *  - autocomplétion d'adresses : https://data.geopf.fr/geocodage/search
  *  - estimation distance / durée : https://data.geopf.fr/navigation/itineraire
  * En cas d'indisponibilité, la saisie libre reste possible et l'estimation est simplement masquée.
+ *
+ * Lien direct vers le mode médical : ajouter ?transport=medical à l'URL (ex. /?transport=medical#reservation).
  */
 import { iconSvg, type IconName } from '../lib/icons';
 import {
@@ -18,12 +23,14 @@ import {
   formatKm,
   formatDuration,
   type BookingPayload,
+  type Prescription,
+  type TripType,
 } from '../lib/booking-email';
 import type { Dict } from '../i18n/fr';
 
 type Strings = Dict['booking'];
 type Kind = 'departure' | 'destination';
-interface Place { id: string; label: string; lon: number; lat: number }
+interface Place { id: string; kind: 'transport' | 'health'; label: string; address: string; lon: number; lat: number }
 interface Config {
   lang: 'fr' | 'en';
   locale: string;
@@ -87,6 +94,10 @@ function parisToUtc(date: string, time: string) {
   utc = guess - off2;
   return new Date(utc);
 }
+const toMinutes = (t: string) => {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+};
 
 const root = document.querySelector<HTMLElement>('[data-booking]');
 const cfgEl = document.getElementById('booking-config');
@@ -94,6 +105,7 @@ if (root && cfgEl) init(root, JSON.parse(cfgEl.textContent || '{}') as Config);
 
 function init(root: HTMLElement, cfg: Config) {
   const s = cfg.s;
+  const md = s.medical;
   const $ = <T extends HTMLElement = HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
   const $$ = <T extends HTMLElement = HTMLElement>(sel: string) => Array.from(root.querySelectorAll<T>(sel));
 
@@ -121,12 +133,22 @@ function init(root: HTMLElement, cfg: Config) {
   const dateIn = $<HTMLInputElement>('#date');
   const timeIn = $<HTMLInputElement>('#time');
   const chips = $$<HTMLButtonElement>('[data-day]');
+  const message = $<HTMLTextAreaElement>('#message');
+  // Transport médical
+  const modeInputs = $$<HTMLInputElement>('input[name="tripType"]');
+  const roundTrip = $<HTMLInputElement>('#roundTrip');
+  const returnBox = $('[data-return]');
+  const returnIn = $<HTMLInputElement>('#returnTime');
+  const recurring = $<HTMLInputElement>('#recurring');
+  const prescriptionInputs = $$<HTMLInputElement>('input[name="prescription"]');
+  const prescriptionNo = $('[data-prescription-no]');
 
   const input = (name: string) => root.querySelector<HTMLInputElement>(`[name="${name}"]`)!;
   const val = (name: string) => input(name).value.trim();
 
   const state = {
     step: 1,
+    mode: 'standard' as TripType,
     departure: { label: '' } as Loc,
     destination: { label: '' } as Loc,
     estimate: null as BookingPayload['estimate'],
@@ -137,21 +159,47 @@ function init(root: HTMLElement, cfg: Config) {
   };
   let last: { ref: string; p: BookingPayload } | null = null;
   const touched = new Set<string>();
+  const isMedical = () => state.mode === 'medical';
+  const prescriptionValue = () => (prescriptionInputs.find((r) => r.checked)?.value ?? '') as Prescription | '';
+
+  /* ---------- Mode : trajet classique / transport médical ---------- */
+  function setMode(mode: TripType) {
+    state.mode = mode;
+    root.dataset.mode = mode;
+    modeInputs.forEach((r) => (r.checked = r.value === mode));
+    message.placeholder = mode === 'medical' ? md.messagePh : s.messagePh;
+    if (mode === 'standard') {
+      ['prescription', 'returnTime'].forEach((f) => {
+        touched.delete(f);
+        showError(f, null);
+      });
+    }
+  }
+  modeInputs.forEach((r) => r.addEventListener('change', () => r.checked && setMode(r.value as TripType)));
+  // Boutons "Réserver un transport médical" (section Services, etc.)
+  document.addEventListener('click', (e) => {
+    const trigger = (e.target as Element | null)?.closest<HTMLElement>('[data-book-mode]');
+    if (!trigger || !flow || flow.hidden) return;
+    setMode(trigger.dataset.bookMode === 'medical' ? 'medical' : 'standard');
+    if (state.step !== 1) goTo(1, false);
+  });
+  if (new URLSearchParams(location.search).get('transport') === 'medical') setMode('medical');
 
   /* ---------- Validation ---------- */
-  const stepFields: Record<number, string[]> = {
-    1: ['departure', 'destination'],
-    2: ['date', 'time'],
-    3: [],
-    4: ['firstName', 'lastName', 'phone', 'email'],
-    5: ['consent'],
+  const stepFields = (n: number): string[] => {
+    switch (n) {
+      case 1: return ['departure', 'destination'];
+      case 2: return isMedical() ? ['date', 'time', 'returnTime'] : ['date', 'time'];
+      case 3: return isMedical() ? ['prescription'] : [];
+      case 4: return ['firstName', 'lastName', 'phone', 'email'];
+      default: return ['consent'];
+    }
   };
 
   function minutesUntil(): number | null {
     if (!dateIn.value || !timeIn.value) return null;
     const now = parisToday();
-    const [hh, mm] = timeIn.value.split(':').map(Number);
-    return daysBetween(now.iso, dateIn.value) * 1440 + (hh * 60 + mm) - now.minutes;
+    return daysBetween(now.iso, dateIn.value) * 1440 + toMinutes(timeIn.value) - now.minutes;
   }
 
   function fieldError(name: string): string | null {
@@ -179,6 +227,11 @@ function init(root: HTMLElement, cfg: Config) {
         }
         return null;
       }
+      case 'returnTime':
+        if (!isMedical() || !roundTrip.checked || !returnIn.value || !timeIn.value) return null;
+        return toMinutes(returnIn.value) > toMinutes(timeIn.value) ? null : md.errors.returnTime;
+      case 'prescription':
+        return !isMedical() || prescriptionValue() ? null : md.errors.prescription;
       case 'firstName':
         return val('firstName') ? null : s.errors.firstName;
       case 'lastName':
@@ -195,6 +248,7 @@ function init(root: HTMLElement, cfg: Config) {
 
   function showError(name: string, msg: string | null) {
     const el = input(name);
+    if (!el) return;
     const wrap = el.closest<HTMLElement>('.field, .check');
     const err = document.getElementById(`${name}-error`);
     wrap?.classList.toggle('is-invalid', !!msg);
@@ -211,7 +265,7 @@ function init(root: HTMLElement, cfg: Config) {
 
   function validateStep(n: number): boolean {
     let first: string | null = null;
-    for (const f of stepFields[n]) {
+    for (const f of stepFields(n)) {
       touched.add(f);
       const e = fieldError(f);
       showError(f, e);
@@ -241,7 +295,7 @@ function init(root: HTMLElement, cfg: Config) {
     });
     const label = tpl(s.stepOf, { n, total: TOTAL });
     count.textContent = label;
-    live.textContent = `${label} : ${s.steps[n - 1]}`;
+    live.textContent = `${label} : ${n === 3 && isMedical() ? md.stepTitle : s.steps[n - 1]}`;
     backBtn.hidden = n === 1;
     nextLabel.textContent = n === TOTAL ? s.submit : s.next;
     hideAlert();
@@ -261,14 +315,18 @@ function init(root: HTMLElement, cfg: Config) {
   $$<HTMLButtonElement>('[data-goto]').forEach((b) => b.addEventListener('click', () => goTo(Number(b.dataset.goto))));
 
   /* ---------- Adresses ---------- */
-  const placeOpts: Opt[] = cfg.places.map((p) => ({
+  const toOpt = (p: Place): Opt => ({
     kind: 'place',
     main: p.label,
-    value: p.label,
+    sub: p.address || undefined,
+    value: p.address ? `${p.label}, ${p.address}` : p.label,
     lon: p.lon,
     lat: p.lat,
-    icon: p.id === 'lys' ? 'plane' : 'train',
-  }));
+    icon: p.kind === 'health' ? 'medical' : p.id === 'lys' ? 'plane' : 'train',
+  });
+  const transportOpts = cfg.places.filter((p) => p.kind === 'transport').map(toOpt);
+  const healthOpts = cfg.places.filter((p) => p.kind === 'health').map(toOpt);
+  const allPlaceOpts = [...healthOpts, ...transportOpts];
 
   function setLoc(kind: Kind, loc: Loc) {
     state[kind] = { ...loc };
@@ -386,13 +444,14 @@ function init(root: HTMLElement, cfg: Config) {
         kind === 'departure' && 'geolocation' in navigator
           ? [{ kind: 'geo', main: s.myLocation, value: '', icon: 'locate' }]
           : [];
-      render([{ opts: geo }, { title: s.places, opts: placeOpts }]);
+      if (isMedical()) render([{ opts: geo }, { title: md.hospitals, opts: healthOpts }, { title: s.places, opts: transportOpts }]);
+      else render([{ opts: geo }, { title: s.places, opts: transportOpts }]);
     }
 
     async function search(q: string) {
       ctrl?.abort();
       ctrl = new AbortController();
-      const local = placeOpts.filter((p) => norm(p.main).includes(norm(q)));
+      const local = allPlaceOpts.filter((p) => norm(p.main).includes(norm(q)));
       const params = new URLSearchParams({ q, limit: '10', autocomplete: '1', index: 'address,poi', lat: LYON.lat, lon: LYON.lon });
       try {
         const res = await fetch(`${GEO_SEARCH}?${params}`, { signal: ctrl.signal });
@@ -473,7 +532,7 @@ function init(root: HTMLElement, cfg: Config) {
       window.clearTimeout(timer);
       if (!q) return showDefaults();
       if (q.length < 3) {
-        const local = placeOpts.filter((p) => norm(p.main).includes(norm(q)));
+        const local = allPlaceOpts.filter((p) => norm(p.main).includes(norm(q)));
         return local.length ? render([{ opts: local }]) : close();
       }
       timer = window.setTimeout(() => search(q), 220);
@@ -595,6 +654,7 @@ function init(root: HTMLElement, cfg: Config) {
     syncChips();
     revalidate('date');
     revalidate('time');
+    revalidate('returnTime');
     checkSoon();
   };
   chips.forEach((c) =>
@@ -615,6 +675,27 @@ function init(root: HTMLElement, cfg: Config) {
     touched.add('time');
     onWhenChange();
   });
+
+  /* ---------- Transport médical : aller-retour, prescription ---------- */
+  roundTrip.addEventListener('change', () => {
+    returnBox.hidden = !roundTrip.checked;
+    if (!roundTrip.checked) {
+      returnIn.value = '';
+      showError('returnTime', null);
+    }
+  });
+  returnIn.addEventListener('input', () => revalidate('returnTime'));
+  returnIn.addEventListener('change', () => {
+    touched.add('returnTime');
+    showError('returnTime', fieldError('returnTime'));
+  });
+  prescriptionInputs.forEach((r) =>
+    r.addEventListener('change', () => {
+      touched.add('prescription');
+      showError('prescription', fieldError('prescription'));
+      prescriptionNo.hidden = prescriptionValue() !== 'no';
+    }),
+  );
 
   /* ---------- Passagers et bagages ---------- */
   $$('[data-counter]').forEach((c) => {
@@ -710,33 +791,45 @@ function init(root: HTMLElement, cfg: Config) {
   /* ---------- Récapitulatif ---------- */
   const plural = (n: number, one: string, many: string, none?: string) =>
     tpl(n === 0 && none ? none : n === 1 ? one : many, { n });
-  const whenText = (p: { date: string; time: string }) =>
-    `${cap(longDate(p.date, cfg.locale))} ${s.summary.at} ${p.time}`;
+  const whenText = (p: { date: string; time: string; tripType?: TripType }) =>
+    `${cap(longDate(p.date, cfg.locale))} ${p.tripType === 'medical' ? `— ${md.appointmentAt}` : s.summary.at} ${p.time}`;
   const partyText = (p: { passengers: number; luggage: number }) =>
     `${plural(p.passengers, s.passengersOne, s.passengersMany)} · ${plural(p.luggage, s.luggageOne, s.luggageMany, s.luggageNone)}`;
+  const prescriptionLabel = (v: Prescription) =>
+    v === 'yes' ? md.prescriptionYes : v === 'pending' ? md.prescriptionPending : md.prescriptionNo;
+  const tripLabel = (m: NonNullable<BookingPayload['medical']>) =>
+    m.roundTrip ? (m.returnTime ? tpl(md.roundTripAt, { time: m.returnTime }) : md.roundTripTbd) : md.oneWay;
+  const medicalLines = (m: NonNullable<BookingPayload['medical']>) =>
+    [tpl(md.prescriptionSummary, { value: prescriptionLabel(m.prescription) }), m.recurring ? md.recurringSummary : '']
+      .filter(Boolean)
+      .join(' · ');
 
   function renderSummary() {
+    const p = payload();
     const set = (k: string, v: string) => {
       const el = root.querySelector<HTMLElement>(`[data-sum="${k}"]`);
       if (!el) return;
       el.textContent = v;
       el.hidden = !v;
     };
-    set('departure', val('departure'));
-    set('destination', val('destination'));
+    set('medicalType', p.medical ? md.summaryType : '');
+    set('medical', p.medical ? medicalLines(p.medical) : '');
+    set('departure', p.departure);
+    set('destination', p.destination);
     set('estimate', state.estimate ? `≈ ${formatKm(state.estimate.km, cfg.locale)} km · ${formatDuration(state.estimate.minutes)} — ${s.estimateNote}` : '');
-    set('when', dateIn.value && timeIn.value ? whenText({ date: dateIn.value, time: timeIn.value }) : '');
-    set('party', partyText(state));
-    set('name', `${val('firstName')} ${val('lastName')}`.trim());
-    set('reach', [val('phone'), val('email')].filter(Boolean).join(' · '));
-    set('message', val('message'));
-    $('[data-sum-group="message"]').hidden = !val('message');
+    set('when', p.date && p.time ? whenText(p) : '');
+    set('return', p.medical ? tripLabel(p.medical) : '');
+    set('party', partyText(p));
+    set('name', `${p.firstName} ${p.lastName}`.trim());
+    set('reach', [p.phone, p.email].filter(Boolean).join(' · '));
+    set('message', p.message);
+    $('[data-sum-group="message"]').hidden = !p.message;
   }
 
   /* ---------- Envoi ---------- */
   form.addEventListener('input', () => {
     if (!state.startedAt) state.startedAt = Date.now();
-  }, { once: false });
+  });
 
   function hideAlert() {
     alertBox.hidden = true;
@@ -757,6 +850,7 @@ function init(root: HTMLElement, cfg: Config) {
 
   const payload = (): BookingPayload => ({
     lang: cfg.lang,
+    tripType: state.mode,
     departure: val('departure'),
     destination: val('destination'),
     date: dateIn.value,
@@ -767,8 +861,16 @@ function init(root: HTMLElement, cfg: Config) {
     lastName: val('lastName'),
     phone: prettyPhone(val('phone')),
     email: val('email'),
-    message: val('message'),
+    message: message.value.trim(),
     estimate: state.estimate ? { km: Math.round(state.estimate.km * 10) / 10, minutes: Math.round(state.estimate.minutes) } : null,
+    medical: isMedical()
+      ? {
+          prescription: (prescriptionValue() || 'no') as Prescription,
+          roundTrip: roundTrip.checked,
+          returnTime: roundTrip.checked ? returnIn.value : '',
+          recurring: recurring.checked,
+        }
+      : null,
     requestedAt: new Date().toISOString(),
   });
 
@@ -786,7 +888,7 @@ function init(root: HTMLElement, cfg: Config) {
 
     // Vérification complète avant envoi : on renvoie vers la première étape incomplète.
     for (let i = 1; i < TOTAL; i++) {
-      if (stepFields[i].some((f) => fieldError(f))) {
+      if (stepFields(i).some((f) => fieldError(f))) {
         goTo(i);
         validateStep(i);
         return;
@@ -840,6 +942,7 @@ function init(root: HTMLElement, cfg: Config) {
       if (el) el.textContent = v;
     };
     set('ref', ref);
+    set('medical', p.medical ? `${md.summaryType} · ${tripLabel(p.medical)}` : '');
     set('departure', p.departure);
     set('destination', p.destination);
     set('date', cap(longDate(p.date, cfg.locale)));
@@ -872,11 +975,13 @@ function init(root: HTMLElement, cfg: Config) {
       for (let i = 0; i < line.length; i += 72) out.push(line.slice(i, i + 72));
       return out.join('\r\n ');
     };
+    const title = p.medical ? md.calendarTitle : s.done.calendarTitle;
     const desc = [
       `${s.done.ref} : ${ref}`,
       `${s.departure} : ${p.departure}`,
       `${s.destination} : ${p.destination}`,
       partyText(p),
+      ...(p.medical ? [tripLabel(p.medical), md.reminder] : []),
       '',
       s.done.driver,
       `${cfg.siteName} — ${cfg.phone}`,
@@ -892,13 +997,13 @@ function init(root: HTMLElement, cfg: Config) {
       `DTSTAMP:${stamp(new Date())}`,
       `DTSTART:${stamp(start)}`,
       `DTEND:${stamp(end)}`,
-      `SUMMARY:${esc(s.done.calendarTitle)}`,
+      `SUMMARY:${esc(title)}`,
       `LOCATION:${esc(p.departure)}`,
       `DESCRIPTION:${esc(desc)}`,
       'STATUS:TENTATIVE',
       'BEGIN:VALARM',
       'ACTION:DISPLAY',
-      `DESCRIPTION:${esc(s.done.calendarTitle)}`,
+      `DESCRIPTION:${esc(title)}`,
       'TRIGGER:-PT1H',
       'END:VALARM',
       'END:VEVENT',
@@ -952,8 +1057,14 @@ function init(root: HTMLElement, cfg: Config) {
     timeIn.value = '';
     syncChips();
     soonBox.hidden = true;
-    input('message').value = '';
+    message.value = '';
     consent.checked = false;
+    roundTrip.checked = false;
+    returnIn.value = '';
+    returnBox.hidden = true;
+    recurring.checked = false;
+    prescriptionInputs.forEach((r) => (r.checked = false));
+    prescriptionNo.hidden = true;
     $$('[data-counter]').forEach((c) => (c as HTMLElement & { reset?: () => void }).reset?.());
     if (!remember.checked) contactKeys.forEach((k) => (input(k).value = ''));
     touched.clear();

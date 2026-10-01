@@ -39,6 +39,7 @@ const rhone = Array.from({ length: 9 }, (_, j) => {
       <div class="hero__meta" style="--d:0ms">
         <span class="label">{d.hero.label}</span>
         <span class="badge glass"><span class="badge__dot" aria-hidden="true"></span>{d.hero.since}</span>
+        <a class="badge glass hero__cpam" href={`#${d.ids.medical}`}><Icon name="medical" />{d.hero.cpam}</a>
       </div>
 
       <h1 class="hero__title" id="hero-title" style="--d:90ms">
@@ -140,6 +141,14 @@ const rhone = Array.from({ length: 9 }, (_, j) => {
     gap: 0.9rem;
     margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
   }
+  .hero__meta { gap: 0.6rem 0.9rem; }
+  .hero__cpam {
+    color: var(--ink);
+    text-decoration: none;
+    transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease);
+  }
+  .hero__cpam:hover { transform: translateY(-1px); }
+  .hero__cpam :global(svg) { width: 0.85rem; height: 0.85rem; color: var(--ink-2); }
   .hero__title {
     font-size: clamp(2.75rem, 1.15rem + 6.9vw, 5.75rem);
     line-height: 0.98;

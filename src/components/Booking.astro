@@ -11,6 +11,7 @@ interface Props {
 const { lang } = Astro.props;
 const d = t(lang);
 const b = d.booking;
+const md = b.medical;
 const total = b.steps.length;
 const phoneDisplay = lang === 'fr' ? site.phone.display : site.phone.international;
 
@@ -21,11 +22,23 @@ const config = {
   email: site.email,
   phone: site.phone.e164,
   siteName: site.name,
-  places: quickPlaces.map((p) => ({ id: p.id, label: p[lang], lon: p.lonlat[0], lat: p.lonlat[1] })),
+  places: quickPlaces.map((p) => ({
+    id: p.id,
+    kind: p.kind,
+    label: p[lang],
+    address: p.address,
+    lon: p.lonlat[0],
+    lat: p.lonlat[1],
+  })),
   s: b,
 };
+
+/*
+ * Textes à deux variantes : .m-std (trajet classique) / .m-med (transport médical).
+ * L'attribut data-mode du panneau détermine la variante affichée (voir booking.css).
+ */
 ---
-<section class="booking glass glass--sheen" id={d.ids.booking} aria-labelledby="booking-title" data-booking>
+<section class="booking glass glass--sheen" id={d.ids.booking} aria-labelledby="booking-title" data-booking data-mode="standard">
   <div class="booking__flow" data-flow>
     <header class="booking__head">
       <div class="booking__headline">
@@ -53,6 +66,23 @@ const config = {
         <h3 class="step__title" id="step-1-title" tabindex="-1">
           <span class="step__kicker">{b.steps[0]}</span>{b.stepTitles[0]}
         </h3>
+
+        <fieldset class="mode">
+          <legend class="sr-only">{b.mode.legend}</legend>
+          <label class="mode__opt">
+            <input type="radio" name="tripType" value="standard" checked />
+            <span class="mode__box"><span class="mode__name">{b.mode.standard}</span></span>
+          </label>
+          <label class="mode__opt">
+            <input type="radio" name="tripType" value="medical" />
+            <span class="mode__box">
+              <span class="mode__name">{b.mode.medical}</span>
+              <span class="mode__sub">{b.mode.medicalSub}</span>
+            </span>
+          </label>
+        </fieldset>
+        <p class="m-med mode__note"><Icon name="info" />{b.mode.medicalNote}</p>
+
         <div class="route">
           <AddressField kind="departure" label={b.departure} placeholder={b.departurePh} />
           <button class="route__swap" type="button" data-swap aria-label={b.swap}>
@@ -86,11 +116,31 @@ const config = {
             <p class="field__error" id="date-error" data-error></p>
           </div>
           <div class="field">
-            <label class="field__label" for="time">{b.time}</label>
+            <label class="field__label" for="time">
+              <span class="m-std">{b.time}</span><span class="m-med">{md.timeLabel}</span>
+            </label>
             <input class="input" id="time" name="time" type="time" step="300" required aria-describedby="time-error" />
             <p class="field__error" id="time-error" data-error></p>
           </div>
         </div>
+        <p class="m-med field__hint step__hint">{md.timeHint}</p>
+
+        <div class="m-med">
+          <label class="check check--block">
+            <input type="checkbox" id="roundTrip" name="roundTrip" aria-describedby="roundTrip-hint" />
+            <span>
+              {md.roundTrip}
+              <span class="check__hint" id="roundTrip-hint">{md.roundTripHint}</span>
+            </span>
+          </label>
+          <div class="field return" data-return hidden>
+            <label class="field__label" for="returnTime">{md.returnTime} <span class="muted">({b.optional})</span></label>
+            <input class="input" id="returnTime" name="returnTime" type="time" step="300" aria-describedby="returnTime-hint returnTime-error" />
+            <p class="field__hint" id="returnTime-hint">{md.returnTimeHint}</p>
+            <p class="field__error" id="returnTime-error" data-error></p>
+          </div>
+        </div>
+
         <div class="notice" data-soon hidden>
           <Icon name="info" />
           <p>
@@ -100,15 +150,33 @@ const config = {
         </div>
       </div>
 
-      <!-- 3. Passagers et bagages -->
+      <!-- 3. Passagers (et informations du transport médical) -->
       <div class="step" data-step="3" role="group" aria-labelledby="step-3-title">
         <h3 class="step__title" id="step-3-title" tabindex="-1">
-          <span class="step__kicker">{b.steps[2]}</span>{b.stepTitles[2]}
+          <span class="step__kicker"><span class="m-std">{b.steps[2]}</span><span class="m-med">{md.stepKicker}</span></span>
+          <span class="m-std">{b.stepTitles[2]}</span><span class="m-med">{md.stepTitle}</span>
         </h3>
+
+        <div class="m-med medical-block">
+          <fieldset class="field choice" aria-describedby="prescription-error">
+            <legend class="field__label">{md.prescription}</legend>
+            <div class="choice__opts">
+              <label class="choice__opt"><input type="radio" name="prescription" value="yes" /><span>{md.prescriptionYes}</span></label>
+              <label class="choice__opt"><input type="radio" name="prescription" value="pending" /><span>{md.prescriptionPending}</span></label>
+              <label class="choice__opt"><input type="radio" name="prescription" value="no" /><span>{md.prescriptionNo}</span></label>
+            </div>
+            <p class="field__error" id="prescription-error" data-error></p>
+          </fieldset>
+          <div class="notice" data-prescription-no hidden>
+            <Icon name="info" />
+            <p>{md.prescriptionNoNotice}</p>
+          </div>
+        </div>
+
         <div class="counter" data-counter="passengers" data-min="1" data-max="7" data-value="1">
           <div class="counter__text">
             <span class="counter__label" id="passengers-label"><Icon name="user" />{b.passengers}</span>
-            <span class="counter__hint">{b.passengersHint}</span>
+            <span class="counter__hint"><span class="m-std">{b.passengersHint}</span><span class="m-med">{md.passengersHint}</span></span>
           </div>
           <div class="stepper">
             <button class="stepper__btn" type="button" data-delta="-1" aria-label={b.decPassengers} disabled>
@@ -134,6 +202,16 @@ const config = {
               <Icon name="plus" />
             </button>
           </div>
+        </div>
+
+        <div class="m-med">
+          <label class="check check--block">
+            <input type="checkbox" id="recurring" name="recurring" aria-describedby="recurring-hint" />
+            <span>
+              {md.recurring}
+              <span class="check__hint" id="recurring-hint">{md.recurringHint}</span>
+            </span>
+          </label>
         </div>
       </div>
 
@@ -189,6 +267,14 @@ const config = {
           <span class="step__kicker">{b.steps[4]}</span>{b.stepTitles[4]}
         </h3>
         <div class="summary">
+          <div class="summary__group m-med">
+            <div class="summary__head">
+              <h4>{md.summaryTitle}</h4>
+              <button class="summary__edit" type="button" data-goto="3" aria-label={fmt(b.summary.editLabel, { section: md.summaryTitle })}>{b.summary.edit}</button>
+            </div>
+            <p data-sum="medicalType"></p>
+            <p class="summary__meta" data-sum="medical"></p>
+          </div>
           <div class="summary__group">
             <div class="summary__head">
               <h4>{b.summary.trip}</h4>
@@ -206,6 +292,7 @@ const config = {
               <button class="summary__edit" type="button" data-goto="2" aria-label={fmt(b.summary.editLabel, { section: b.summary.when })}>{b.summary.edit}</button>
             </div>
             <p data-sum="when"></p>
+            <p class="summary__meta" data-sum="return"></p>
           </div>
           <div class="summary__group">
             <div class="summary__head">
@@ -234,11 +321,12 @@ const config = {
         <label class="check check--consent">
           <input type="checkbox" id="consent" name="consent" required aria-describedby="consent-error" />
           <span>
-            {b.consentA}<a class="link" href={pathFor('privacy', lang)} target="_blank" rel="noopener">{b.consentLink}<span class="sr-only"> {d.a11y.newTab}</span></a>{b.consentB}
+            <span class="m-std">{b.consentA}</span><span class="m-med">{md.consentA}</span><a class="link" href={pathFor('privacy', lang)} target="_blank" rel="noopener">{b.consentLink}<span class="sr-only"> {d.a11y.newTab}</span></a>{b.consentB}
           </span>
         </label>
         <p class="field__error" id="consent-error" data-error></p>
         <p class="request-note"><Icon name="info" />{b.requestNote}</p>
+        <p class="m-med request-note"><Icon name="document" />{md.reminder}</p>
       </div>
 
       <div class="alert" role="alert" data-alert hidden>
@@ -275,12 +363,14 @@ const config = {
     <p class="done__text" data-done-text hidden>{b.done.mailtoText}</p>
     <dl class="done__details">
       <div class="done__ref-row"><dt>{b.done.ref}</dt><dd class="done__ref tabular" data-done="ref"></dd></div>
+      <div class="m-med"><dt>{md.summaryTitle}</dt><dd data-done="medical"></dd></div>
       <div><dt>{b.departure}</dt><dd data-done="departure"></dd></div>
       <div><dt>{b.destination}</dt><dd data-done="destination"></dd></div>
       <div><dt>{b.date}</dt><dd data-done="date"></dd></div>
-      <div><dt>{b.time}</dt><dd class="tabular" data-done="time"></dd></div>
+      <div><dt><span class="m-std">{b.time}</span><span class="m-med">{md.timeLabel}</span></dt><dd class="tabular" data-done="time"></dd></div>
     </dl>
     <p class="done__driver">{b.done.driver}</p>
+    <p class="m-med done__reminder">{md.reminder}</p>
     <p class="done__ack muted" data-done-ack hidden>{b.done.emailCopy}</p>
     <div class="done__actions">
       <button class="btn btn--primary btn--sm" type="button" data-mailto-retry hidden><Icon name="mail" />{b.done.mailtoRetry}</button>
