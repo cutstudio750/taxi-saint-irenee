@@ -1,0 +1,118 @@
+---
+import '@fontsource-variable/geist/index.css';
+import '@fontsource/instrument-serif/latin-400-italic.css';
+import '../styles/global.css';
+import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ActionBar from '../components/ActionBar.astro';
+import LangToast from '../components/LangToast.astro';
+import { t, languages, defaultLang, pathFor, withBase, type Lang, type RouteKey } from '../i18n';
+import { site } from '../config/site';
+import { buildSchema } from '../lib/schema';
+
+interface Props {
+  lang: Lang;
+  route: RouteKey;
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+  /** Pages hors navigation multilingue (404, hors ligne). */
+  standalone?: boolean;
+}
+
+const { lang, route, title, description, noindex = false, standalone = false } = Astro.props;
+const d = t(lang);
+const pageTitle = title ? `${title} — ${site.name}` : d.meta.title;
+const pageDescription = description ?? d.meta.description;
+
+const abs = (path: string) => new URL(path, Astro.site).href;
+const canonical = abs(pathFor(route, lang));
+const siteUrl = abs(withBase('/'));
+const ogImage = abs(withBase(`/og-${lang}.png`));
+const alternates = languages.map((l) => ({ lang: l, href: abs(pathFor(route, l)) }));
+const otherLang = languages.find((l) => l !== lang)!;
+const onHome = route === 'home' && !standalone;
+
+const schema =
+  route === 'home' && !standalone
+    ? buildSchema({
+        d,
+        siteUrl,
+        pageUrl: canonical,
+        homeUrl: canonical,
+        logoUrl: abs(withBase('/brand/mark.svg')),
+        imageUrl: ogImage,
+      })
+    : null;
+---
+<!doctype html>
+<html lang={lang} dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    {noindex ? <meta name="robots" content="noindex, follow" /> : <meta name="robots" content="index, follow, max-image-preview:large" />}
+    {!standalone && <link rel="canonical" href={canonical} />}
+    {!standalone && alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
+    {!standalone && <link rel="alternate" hreflang="x-default" href={abs(pathFor(route, defaultLang))} />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={d.meta.ogAlt} />
+    <meta property="og:locale" content={d.ogLocale} />
+    <meta property="og:locale:alternate" content={t(otherLang).ogLocale} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#f5f4f0" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0c0c0d" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={withBase('/favicon-32.png')} sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
+    <link rel="manifest" href={withBase('/manifest.webmanifest')} />
+    <link rel="preload" href={geistLatin} as="font" type="font/woff2" crossorigin />
+
+    <script is:inline>
+      // Active les animations progressives et respecte un choix de langue explicite déjà fait.
+      (function () {
+        var html = document.documentElement;
+        html.classList.add('js');
+        try {
+          var pref = localStorage.getItem('tsi.lang');
+          if (pref && pref !== html.lang) {
+            var alt = document.querySelector('link[rel="alternate"][hreflang="' + pref + '"]');
+            if (alt) location.replace(new URL(alt.href).pathname + location.search);
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{d.a11y.skip}</a>
+    <Header lang={lang} route={route} onHome={onHome} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer lang={lang} route={route} onHome={onHome} />
+    <ActionBar lang={lang} route={route} onHome={onHome} />
+    {!standalone && <LangToast lang={lang} route={route} />}
+
+    <script>
+      import '../scripts/ui';
+    </script>
+  </body>
+</html>

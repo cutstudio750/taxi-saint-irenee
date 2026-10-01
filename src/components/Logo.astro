@@ -1,0 +1,31 @@
+---
+/**
+ * Logo Taxi Saint Irénée.
+ * Le monogramme évoque la confluence du Rhône et de la Saône :
+ * deux trajectoires qui se rejoignent, comme un trajet qui arrive à destination.
+ * Le mot-symbole est composé en Geist, capitales espacées.
+ * Sous 480 px, le mot-symbole passe sur deux lignes (version mobile).
+ */
+interface Props {
+  href: string;
+  label: string;
+}
+const { href, label } = Astro.props;
+---
+<a class="brand" href={href} aria-label={label}>
+  <svg class="brand__mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+    <rect width="64" height="64" rx="18" fill="currentColor" />
+    <path
+      d="M13 20.5C24 20.5 28.5 32 36.5 32M13 43.5C24 43.5 28.5 32 36.5 32H51"
+      fill="none"
+      stroke="var(--bg)"
+      stroke-width="3.6"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+  <span class="brand__word" aria-hidden="true">
+    <span class="brand__word-sm">Taxi</span>
+    <span>Saint Irénée</span>
+  </span>
+</a>

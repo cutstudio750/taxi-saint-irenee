@@ -1,0 +1,355 @@
+import type { Dict } from './fr';
+
+export const en: Dict = {
+  lang: 'en',
+  locale: 'en-GB',
+  ogLocale: 'en_GB',
+  label: 'English',
+  short: 'EN',
+
+  ids: {
+    booking: 'booking',
+    how: 'experience',
+    about: 'about',
+    services: 'services',
+    vehicle: 'vehicle',
+    trust: 'why-us',
+    reviews: 'reviews',
+    zone: 'area',
+    faq: 'faq',
+    contact: 'contact',
+  },
+
+  meta: {
+    title: 'Taxi Saint Irénée — Lyon Taxi Since 2014',
+    description:
+      'Lyon private taxi since 2014: airport and station transfers, business and private trips in a 7-seater Mercedes SUV. Book online or call +33 6 61 88 27 07.',
+    ogAlt: 'Taxi Saint Irénée — Lyon taxi since 2014',
+  },
+
+  a11y: {
+    skip: 'Skip to main content',
+    home: 'Taxi Saint Irénée, back to home page',
+    mainNav: 'Main navigation',
+    footerNav: 'Site map',
+    menuOpen: 'Open menu',
+    menuClose: 'Close menu',
+    langSwitch: 'Site language',
+    callAria: 'Call Taxi Saint Irénée on +33 6 61 88 27 07',
+    emailAria: 'Email Taxi Saint Irénée',
+    newTab: '(opens in a new tab)',
+    quickActions: 'Quick actions',
+    stars: 'Rating: {n} out of 5',
+    close: 'Close',
+  },
+
+  nav: {
+    services: 'Services',
+    vehicle: 'Our vehicle',
+    about: 'About',
+    reviews: 'Reviews',
+    contact: 'Contact',
+    book: 'Book',
+    call: 'Call',
+  },
+
+  hero: {
+    label: 'Taxi in Lyon',
+    since: 'Since 2014',
+    titleA: 'Your ride in Lyon,',
+    titleB: 'made simple.',
+    lead: 'A professional taxi service for private and business travel, in Lyon and the surrounding region.',
+    ctaBook: 'Book a ride',
+    reassure: ['No account needed', 'Personally confirmed by your driver'],
+  },
+
+  how: {
+    label: 'The experience',
+    title: 'Three steps, no surprises.',
+    steps: [
+      {
+        title: 'Send your request',
+        text: 'Pick-up, destination, time: it only takes a few seconds, from your phone or your computer.',
+      },
+      {
+        title: 'Your driver confirms',
+        text: 'Every request is reviewed personally. You receive a direct confirmation, by phone or by email.',
+      },
+      {
+        title: 'You are picked up',
+        text: 'At the agreed time and place. All that is left is to enjoy the ride.',
+      },
+    ],
+  },
+
+  about: {
+    label: 'Since 2014',
+    title: 'A Lyon company, by your side for more than ten years.',
+    p1: 'Taxi Saint Irénée has been driving its clients around Lyon and the wider region since 2014. A local, independent business where every trip is handled personally, from your request to your arrival.',
+    p2: 'More than ten years on Lyon’s roads means a close knowledge of the city, its neighbourhoods, its train stations and the routes to the airport. It is also a way of working: staying reachable, paying attention to every passenger, and taking punctuality seriously.',
+    facts: [
+      { value: '2014', label: 'Year founded' },
+      { value: 'Lyon', label: 'Metropolitan area and region' },
+      { value: '7', label: 'Seats on board' },
+    ],
+  },
+
+  services: {
+    label: 'Services',
+    title: 'A taxi for every journey.',
+    lead: 'Business travellers, families, visitors: the same level of care, whatever the trip.',
+    items: [
+      { icon: 'plane', title: 'Airport transfers', text: 'Lyon-Saint Exupéry, for departures and arrivals.' },
+      { icon: 'train', title: 'Train station transfers', text: 'Part-Dieu, Perrache, Saint-Exupéry TGV: catch your train, stress-free.' },
+      { icon: 'briefcase', title: 'Business travel', text: 'Meetings, seminars, welcoming colleagues or clients.' },
+      { icon: 'pin', title: 'Private rides', text: 'Evenings out, appointments, events: a comfortable ride, on time.' },
+      { icon: 'family', title: 'Family trips', text: 'Up to 7 seats to travel together, luggage included.' },
+      { icon: 'route', title: 'Long-distance trips', text: 'Beyond the Lyon area, to other cities and regions, on request.' },
+      { icon: 'clock', title: 'Hourly hire', text: 'A driver and vehicle booked for a set time, around your schedule.' },
+    ],
+  },
+
+  vehicle: {
+    label: 'Our vehicle',
+    title: 'A latest-generation Mercedes SUV, 7 seats.',
+    lead: 'The vehicle serves the journey, not the other way round. Spacious and comfortable, it was chosen for travelling alone, as a family or as a team, with the room your luggage needs.',
+    features: [
+      { title: 'Comfort', text: 'A smooth ride and a quiet cabin.' },
+      { title: 'Space', text: 'Room for every passenger.' },
+      { title: 'Capacity', text: 'Up to 7 passengers on board.' },
+      { title: 'For families', text: 'Travel together, in a single vehicle.' },
+      { title: 'For business', text: 'A setting suited to business travel.' },
+      { title: 'Luggage', text: 'Space designed for trips away.' },
+    ],
+    photos: {
+      exterieur: 'Exterior',
+      interieur: 'Interior',
+      coffre: 'Luggage space',
+      pending: 'Photo coming soon',
+      note: 'Reserved for photos of the Taxi Saint Irénée vehicle.',
+      alt: {
+        exterieur: 'The Taxi Saint Irénée 7-seater Mercedes SUV, exterior view',
+        interieur: 'Inside the Taxi Saint Irénée Mercedes SUV',
+        coffre: 'Luggage space of the Taxi Saint Irénée Mercedes SUV',
+      },
+    },
+  },
+
+  trust: {
+    label: 'Trust',
+    title: 'Why Taxi Saint Irénée?',
+    items: [
+      { title: 'Since 2014', text: 'More than ten years of service in Lyon.' },
+      { title: 'Local service', text: 'A Lyon business that knows the city and how to get around it.' },
+      { title: 'Advance booking', text: 'Plan your ride; your driver confirms the pick-up.' },
+      { title: 'Professional service', text: 'Someone you can reach, and clear communication.' },
+      { title: '7-seater vehicle', text: 'Room for passengers and luggage alike.' },
+      { title: 'Comfort', text: 'A recent Mercedes SUV for a relaxed journey.' },
+      { title: 'Personal attention', text: 'Every request is handled individually: timing, place, special requirements.' },
+    ],
+  },
+
+  reviews: {
+    label: 'Client reviews',
+    title: 'What our clients say.',
+    average: 'Average rating',
+    countOne: '{n} review',
+    countMany: '{n} reviews',
+    emptyTitle: 'Client reviews will be available soon.',
+    emptyText: 'Have you travelled with Taxi Saint Irénée? Your feedback helps other travellers choose with confidence.',
+    leave: 'Leave a review',
+    leaveEmailSubject: 'My review of Taxi Saint Irénée',
+    via: 'via {source}',
+  },
+
+  zone: {
+    label: 'Service area',
+    title: 'Lyon, its metropolitan area and beyond.',
+    text: 'Based in Lyon, Taxi Saint Irénée drives you across the city, the metropolitan area and nearby towns, as well as long-distance trips on request.',
+    communesTitle: 'For example',
+    note: 'Indicative list. For any other town, simply send your request.',
+    hubsTitle: 'Stations and airport',
+    hubs: ['Lyon-Saint Exupéry Airport', 'Lyon Part-Dieu Station', 'Lyon Perrache Station', 'Lyon-Saint Exupéry TGV Station'],
+  },
+
+  faq: {
+    label: 'Frequently asked questions',
+    title: 'Good to know.',
+    items: [
+      {
+        q: 'How do I book a taxi?',
+        a: 'Online, with the booking form, in a few steps. Or by phone on +33 6 61 88 27 07. For an immediate departure, calling is the quickest option.',
+      },
+      {
+        q: 'Is my booking confirmed as soon as I send the form?',
+        a: 'No. The form sends a request. Your driver gets back to you to confirm availability and the pick-up details.',
+      },
+      {
+        q: 'How many passengers can you carry?',
+        a: 'The vehicle has 7 seats. Let us know the number of passengers and pieces of luggage in your request so the pick-up can be arranged accordingly.',
+      },
+      {
+        q: 'Do you provide airport and train station transfers?',
+        a: 'Yes: Lyon-Saint Exupéry, Part-Dieu, Perrache, Saint-Exupéry TGV and more. Remember to add your flight or train number in the additional information.',
+      },
+      {
+        q: 'Can I book for someone else?',
+        a: 'Yes. Add the passenger’s name and phone number in the additional information.',
+      },
+      {
+        q: 'Do you offer long-distance trips?',
+        a: 'Yes, on request. Enter your destination and your driver will get back to you to arrange the details.',
+      },
+    ],
+  },
+
+  contact: {
+    label: 'Contact',
+    title: 'A question, or a trip to plan?',
+    since: 'In Lyon since 2014',
+    phoneLabel: 'Phone',
+    emailLabel: 'Email',
+    call: 'Call',
+    book: 'Book',
+  },
+
+  footer: {
+    tagline: 'Taxi in Lyon since 2014.',
+    home: 'Home',
+    services: 'Services',
+    vehicle: 'Vehicle',
+    booking: 'Booking',
+    reviews: 'Reviews',
+    contact: 'Contact',
+    legal: 'Legal notice',
+    privacy: 'Privacy policy',
+    rights: 'All rights reserved.',
+    city: 'Lyon, France',
+  },
+
+  langSuggest: {
+    // Shown on the French version to visitors whose browser is not set to French.
+    text: 'This site is also available in English.',
+    action: 'View in English',
+  },
+
+  booking: {
+    title: 'Book a ride',
+    stepOf: 'Step {n} of {total}',
+    progress: 'Booking request progress',
+    steps: ['Route', 'Date and time', 'Passengers', 'Your details', 'Summary'],
+    stepTitles: ['Where to?', 'When are you leaving?', 'How many of you?', 'Your details', 'Check your request'],
+
+    departure: 'Pick-up',
+    departurePh: 'Address, station, airport…',
+    destination: 'Destination',
+    destinationPh: 'Where would you like to go?',
+    swap: 'Swap pick-up and destination',
+    myLocation: 'My current location',
+    locating: 'Locating…',
+    locationError: 'Location unavailable. Please type the address.',
+    places: 'Popular places',
+    suggestions: 'Suggestions',
+    noResult: 'No suggestions. You can type the address freely.',
+    resultsCount: '{n} suggestions available.',
+    estimate: 'Estimate',
+    estimateNote: 'Approximate distance and duration, excluding traffic.',
+
+    date: 'Date',
+    time: 'Time',
+    today: 'Today',
+    tomorrow: 'Tomorrow',
+    soonNotice: 'Leaving in less than two hours? Calling is the surest way to get a quick answer.',
+
+    passengers: 'Passengers',
+    passengersHint: 'Up to 7 seats',
+    luggage: 'Luggage',
+    luggageHint: 'Suitcases and travel bags. Mention any bulky items in the next step.',
+    decPassengers: 'Remove a passenger',
+    incPassengers: 'Add a passenger',
+    decLuggage: 'Remove a piece of luggage',
+    incLuggage: 'Add a piece of luggage',
+    passengersOne: '{n} passenger',
+    passengersMany: '{n} passengers',
+    luggageNone: 'No luggage',
+    luggageOne: '{n} piece of luggage',
+    luggageMany: '{n} pieces of luggage',
+
+    firstName: 'First name',
+    lastName: 'Last name',
+    phone: 'Phone',
+    phoneHint: 'Your driver will contact you on this number.',
+    email: 'Email',
+    message: 'Additional information',
+    optional: 'optional',
+    messagePh: 'Flight or train number, exact meeting point, special requirements…',
+    remember: 'Remember my details on this device',
+    rememberHint: 'They are only stored in your browser.',
+    remembered: 'Details filled in from this device.',
+    forget: 'Clear',
+
+    summary: {
+      trip: 'Route',
+      when: 'Date and time',
+      party: 'Passengers and luggage',
+      contact: 'Your details',
+      message: 'Additional information',
+      edit: 'Edit',
+      editLabel: 'Edit: {section}',
+      at: 'at',
+    },
+    consentA: 'I agree that this information may be used to process my request, in accordance with the ',
+    consentLink: 'privacy policy',
+    consentB: '.',
+    requestNote: 'This is a booking request: it will be confirmed personally by your driver.',
+
+    next: 'Continue',
+    back: 'Back',
+    submit: 'Send request',
+    sending: 'Sending…',
+
+    errors: {
+      departure: 'Please enter a pick-up point.',
+      destination: 'Please enter a destination.',
+      same: 'Pick-up and destination are the same.',
+      date: 'Please choose a date.',
+      time: 'Please choose a time.',
+      past: 'This time has already passed.',
+      tooFar: 'Please choose a date within the next twelve months.',
+      firstName: 'Please enter your first name.',
+      lastName: 'Please enter your last name.',
+      phone: 'Please enter a valid phone number.',
+      email: 'Please enter a valid email address.',
+      consent: 'Your agreement is required to send the request.',
+      send: 'Your request could not be sent. Check your connection and try again, or contact us directly.',
+      invalid: 'Some details need to be corrected.',
+    },
+
+    done: {
+      title: 'Your request has been sent.',
+      status: 'Awaiting confirmation',
+      ref: 'Booking no.',
+      driver: 'Your driver will get back to you to confirm your booking.',
+      emailCopy: 'A summary has been sent to you by email.',
+      addCalendar: 'Add to calendar',
+      share: 'Share',
+      copied: 'Details copied',
+      newRequest: 'New request',
+      calendarTitle: 'Taxi Saint Irénée — ride to be confirmed',
+      shareTitle: 'Ride request — Taxi Saint Irénée',
+      mailtoTitle: 'Your request is ready.',
+      mailtoText: 'Your email app has just opened with the request filled in. Send that email to pass it on to your driver.',
+      mailtoRetry: 'Open my email app again',
+    },
+
+    callInstead: 'Call +33 6 61 88 27 07',
+    emailInstead: 'Send by email',
+    noscript: 'Online booking requires JavaScript. Call us on +33 6 61 88 27 07 or email taxisaintirenee@gmail.com.',
+  },
+
+  notFound: {
+    title: 'Page not found',
+    text: 'The page you are looking for does not exist or has moved.',
+    back: 'Back to home page',
+  },
+};

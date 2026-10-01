@@ -1,0 +1,54 @@
+---
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+---
+<section class="section trust" id={d.ids.trust} aria-labelledby="trust-title">
+  <div class="container trust__grid">
+    <div class="trust__head" data-reveal>
+      <p class="label"><span class="label__index">06</span>{d.trust.label}</p>
+      <h2 class="h2" id="trust-title">{d.trust.title}</h2>
+    </div>
+    <ol class="trust__list" role="list">
+      {d.trust.items.map((item, i) => (
+        <li class="trust__item" data-reveal style={`--d:${(i % 2) * 80}ms`}>
+          <span class="trust__num tabular" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <div>
+            <h3 class="trust__title">{item.title}</h3>
+            <p>{item.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .trust__grid { display: grid; gap: clamp(2.5rem, 5vw, 4rem); }
+  .trust__head { display: grid; gap: 1.25rem; align-content: start; }
+  .trust__list { border-bottom: 1px solid var(--line); }
+  .trust__item {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    gap: 1rem;
+    padding: clamp(1.5rem, 3vw, 2.25rem) 0;
+    border-top: 1px solid var(--line);
+  }
+  .trust__num { font-size: 0.8125rem; font-weight: 500; color: var(--muted); padding-top: 0.45rem; }
+  .trust__title {
+    font-size: clamp(1.375rem, 1.15rem + 1vw, 2rem);
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    font-weight: 500;
+  }
+  .trust__item p { margin-top: 0.5rem; color: var(--muted); max-width: 32em; }
+  @media (min-width: 64rem) {
+    .trust__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 3rem; }
+    .trust__head { position: sticky; top: 7.5rem; align-self: start; }
+    .trust__item { grid-template-columns: 4rem minmax(0, 1fr); }
+  }
+</style>

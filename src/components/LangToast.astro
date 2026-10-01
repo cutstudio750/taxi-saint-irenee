@@ -1,0 +1,27 @@
+---
+import Icon from './Icon.astro';
+import { t, languages, pathFor, type Lang, type RouteKey } from '../i18n';
+
+/**
+ * Suggestion de langue, jamais de redirection automatique :
+ * les robots d'indexation et les visiteurs gardent toujours l'accès aux deux versions.
+ * Le texte est rédigé dans la langue proposée.
+ */
+interface Props {
+  lang: Lang;
+  route: RouteKey;
+}
+const { lang, route } = Astro.props;
+const other = languages.find((l) => l !== lang)!;
+const o = t(other);
+const d = t(lang);
+---
+<div class="lang-toast glass" role="region" aria-label={d.a11y.langSwitch} data-lang-toast={other} hidden>
+  <p lang={other}>{o.langSuggest.text}</p>
+  <a class="btn btn--primary" href={pathFor(route, other)} hreflang={other} lang={other} data-lang-link={other}>
+    {o.langSuggest.action}
+  </a>
+  <button class="icon-btn" type="button" data-lang-dismiss aria-label={d.a11y.close}>
+    <Icon name="close" />
+  </button>
+</div>

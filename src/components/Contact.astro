@@ -1,0 +1,88 @@
+---
+import Icon from './Icon.astro';
+import { t, type Lang } from '../i18n';
+import { site } from '../config/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const phone = lang === 'fr' ? site.phone.display : site.phone.international;
+---
+<section class="section contact" id={d.ids.contact} aria-labelledby="contact-title">
+  <div class="container">
+    <div class="contact__card" data-reveal>
+      <p class="label"><span class="label__index">10</span>{d.contact.label}</p>
+      <h2 class="h2 contact__title" id="contact-title">{d.contact.title}</h2>
+
+      <div class="contact__brand">
+        <p class="contact__name">{site.name}</p>
+        <p class="muted">{d.contact.since}</p>
+      </div>
+
+      <dl class="contact__lines">
+        <div>
+          <dt>{d.contact.phoneLabel}</dt>
+          <dd><a class="contact__phone tabular" href={site.phone.href} aria-label={d.a11y.callAria}>{phone}</a></dd>
+        </div>
+        <div>
+          <dt>{d.contact.emailLabel}</dt>
+          <dd><a class="contact__email" href={`mailto:${site.email}`}>{site.email}</a></dd>
+        </div>
+      </dl>
+
+      <div class="contact__actions" id="contact-actions">
+        <a class="btn btn--primary btn--lg" href={site.phone.href} aria-label={d.a11y.callAria}>
+          <Icon name="phone" />{d.contact.call}
+        </a>
+        <a class="btn btn--ghost btn--lg" href={`#${d.ids.booking}`} data-book>
+          {d.contact.book}<Icon name="arrowRight" class="btn__arrow" />
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact__card {
+    display: grid;
+    justify-items: start;
+    padding: clamp(1.75rem, 6vw, 5rem);
+    border-radius: clamp(1.5rem, 3vw, 2.5rem);
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px var(--line), var(--shadow-md);
+  }
+  .contact__title { margin-top: 1.25rem; max-width: 18em; }
+  .contact__brand { margin-top: clamp(2rem, 4vw, 3rem); }
+  .contact__name {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .contact__brand .muted { font-size: 0.9375rem; margin-top: 0.15rem; }
+  .contact__lines { display: grid; gap: 1.25rem; margin-top: 1.75rem; width: 100%; }
+  .contact__lines dt { font-size: 0.8125rem; color: var(--muted); }
+  .contact__lines dd { margin: 0.15rem 0 0; }
+  .contact__phone {
+    font-size: clamp(1.75rem, 0.9rem + 5vw, 4.75rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .contact__phone:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+  .contact__email {
+    font-size: clamp(1.0625rem, 0.95rem + 0.8vw, 1.5rem);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    overflow-wrap: anywhere;
+  }
+  .contact__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: clamp(2rem, 4vw, 3rem); }
+  @media (max-width: 29.99rem) {
+    .contact__actions { width: 100%; }
+    .contact__actions .btn { flex: 1 1 100%; }
+  }
+</style>

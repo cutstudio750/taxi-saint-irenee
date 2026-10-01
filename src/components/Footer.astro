@@ -1,0 +1,58 @@
+---
+import Logo from './Logo.astro';
+import LangSwitch from './LangSwitch.astro';
+import { t, pathFor, sectionHref, type Lang, type RouteKey } from '../i18n';
+import { site } from '../config/site';
+
+interface Props {
+  lang: Lang;
+  route: RouteKey;
+  onHome?: boolean;
+}
+const { lang, route, onHome: onHomeProp } = Astro.props;
+const d = t(lang);
+const onHome = onHomeProp ?? route === 'home';
+const s = (id: string) => sectionHref(lang, id, onHome);
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <Logo href={pathFor('home', lang)} label={d.a11y.home} />
+        <p>{d.footer.tagline}</p>
+        <div class="footer__contact">
+          <a href={site.phone.href} aria-label={d.a11y.callAria} class="tabular">
+            {lang === 'fr' ? site.phone.display : site.phone.international}
+          </a>
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+        </div>
+      </div>
+
+      <nav aria-label={d.a11y.footerNav}>
+        <p class="footer__title">{site.name}</p>
+        <ul class="footer__links" role="list">
+          <li><a href={pathFor('home', lang)}>{d.footer.home}</a></li>
+          <li><a href={s(d.ids.services)}>{d.footer.services}</a></li>
+          <li><a href={s(d.ids.vehicle)}>{d.footer.vehicle}</a></li>
+          <li><a href={s(d.ids.booking)}>{d.footer.booking}</a></li>
+          <li><a href={s(d.ids.reviews)}>{d.footer.reviews}</a></li>
+          <li><a href={s(d.ids.contact)}>{d.footer.contact}</a></li>
+        </ul>
+      </nav>
+
+      <div>
+        <p class="footer__title">{lang === 'fr' ? 'Informations' : 'Information'}</p>
+        <ul class="footer__links" role="list">
+          <li><a href={pathFor('legal', lang)}>{d.footer.legal}</a></li>
+          <li><a href={pathFor('privacy', lang)}>{d.footer.privacy}</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>© {year} {site.name} · {d.hero.since}. {d.footer.rights}</p>
+      <LangSwitch lang={lang} route={route} />
+    </div>
+  </div>
+</footer>

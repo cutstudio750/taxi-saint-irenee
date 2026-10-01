@@ -1,0 +1,302 @@
+---
+import '../styles/booking.css';
+import Icon from './Icon.astro';
+import AddressField from './AddressField.astro';
+import { t, fmt, pathFor, type Lang } from '../i18n';
+import { site, quickPlaces, bookingEndpoint } from '../config/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const b = d.booking;
+const total = b.steps.length;
+const phoneDisplay = lang === 'fr' ? site.phone.display : site.phone.international;
+
+const config = {
+  lang,
+  locale: d.locale,
+  endpoint: bookingEndpoint,
+  email: site.email,
+  phone: site.phone.e164,
+  siteName: site.name,
+  places: quickPlaces.map((p) => ({ id: p.id, label: p[lang], lon: p.lonlat[0], lat: p.lonlat[1] })),
+  s: b,
+};
+---
+<section class="booking glass glass--sheen" id={d.ids.booking} aria-labelledby="booking-title" data-booking>
+  <div class="booking__flow" data-flow>
+    <header class="booking__head">
+      <div class="booking__headline">
+        <h2 class="booking__title" id="booking-title">{b.title}</h2>
+        <p class="booking__count tabular" data-step-count aria-hidden="true">{fmt(b.stepOf, { n: 1, total })}</p>
+      </div>
+      <ol class="progress" role="list" aria-label={b.progress}>
+        {b.steps.map((name, i) => (
+          <li class:list={['progress__seg', { 'is-current': i === 0 }]} data-seg>
+            <span class="sr-only">{name}</span>
+          </li>
+        ))}
+      </ol>
+      <p class="sr-only" aria-live="polite" data-live></p>
+    </header>
+
+    <form class="booking__form" novalidate data-form>
+      <div class="hp" aria-hidden="true">
+        <label for="website">Website</label>
+        <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <!-- 1. Trajet -->
+      <div class="step is-active" data-step="1" role="group" aria-labelledby="step-1-title">
+        <h3 class="step__title" id="step-1-title" tabindex="-1">
+          <span class="step__kicker">{b.steps[0]}</span>{b.stepTitles[0]}
+        </h3>
+        <div class="route">
+          <AddressField kind="departure" label={b.departure} placeholder={b.departurePh} />
+          <button class="route__swap" type="button" data-swap aria-label={b.swap}>
+            <Icon name="swap" />
+          </button>
+          <AddressField kind="destination" label={b.destination} placeholder={b.destinationPh} />
+        </div>
+        <div class="estimate" data-estimate hidden>
+          <Icon name="route" />
+          <p>
+            <span class="estimate__label">{b.estimate}</span>
+            <strong class="tabular" data-estimate-value></strong>
+            <span class="estimate__note">{b.estimateNote}</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- 2. Date et heure -->
+      <div class="step" data-step="2" role="group" aria-labelledby="step-2-title">
+        <h3 class="step__title" id="step-2-title" tabindex="-1">
+          <span class="step__kicker">{b.steps[1]}</span>{b.stepTitles[1]}
+        </h3>
+        <div class="chips" role="group" aria-label={b.date}>
+          <button class="chip" type="button" data-day="0" aria-pressed="false">{b.today}</button>
+          <button class="chip" type="button" data-day="1" aria-pressed="false">{b.tomorrow}</button>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label class="field__label" for="date">{b.date}</label>
+            <input class="input" id="date" name="date" type="date" required aria-describedby="date-error" />
+            <p class="field__error" id="date-error" data-error></p>
+          </div>
+          <div class="field">
+            <label class="field__label" for="time">{b.time}</label>
+            <input class="input" id="time" name="time" type="time" step="300" required aria-describedby="time-error" />
+            <p class="field__error" id="time-error" data-error></p>
+          </div>
+        </div>
+        <div class="notice" data-soon hidden>
+          <Icon name="info" />
+          <p>
+            {b.soonNotice}
+            <a class="link" href={site.phone.href}>{b.callInstead}</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- 3. Passagers et bagages -->
+      <div class="step" data-step="3" role="group" aria-labelledby="step-3-title">
+        <h3 class="step__title" id="step-3-title" tabindex="-1">
+          <span class="step__kicker">{b.steps[2]}</span>{b.stepTitles[2]}
+        </h3>
+        <div class="counter" data-counter="passengers" data-min="1" data-max="7" data-value="1">
+          <div class="counter__text">
+            <span class="counter__label" id="passengers-label"><Icon name="user" />{b.passengers}</span>
+            <span class="counter__hint">{b.passengersHint}</span>
+          </div>
+          <div class="stepper">
+            <button class="stepper__btn" type="button" data-delta="-1" aria-label={b.decPassengers} disabled>
+              <Icon name="minus" />
+            </button>
+            <output class="stepper__value tabular" id="passengers" aria-labelledby="passengers-label" aria-live="polite">1</output>
+            <button class="stepper__btn" type="button" data-delta="1" aria-label={b.incPassengers}>
+              <Icon name="plus" />
+            </button>
+          </div>
+        </div>
+        <div class="counter" data-counter="luggage" data-min="0" data-max="10" data-value="0">
+          <div class="counter__text">
+            <span class="counter__label" id="luggage-label"><Icon name="luggage" />{b.luggage}</span>
+            <span class="counter__hint">{b.luggageHint}</span>
+          </div>
+          <div class="stepper">
+            <button class="stepper__btn" type="button" data-delta="-1" aria-label={b.decLuggage} disabled>
+              <Icon name="minus" />
+            </button>
+            <output class="stepper__value tabular" id="luggage" aria-labelledby="luggage-label" aria-live="polite">0</output>
+            <button class="stepper__btn" type="button" data-delta="1" aria-label={b.incLuggage}>
+              <Icon name="plus" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Coordonnées -->
+      <div class="step" data-step="4" role="group" aria-labelledby="step-4-title">
+        <h3 class="step__title" id="step-4-title" tabindex="-1">
+          <span class="step__kicker">{b.steps[3]}</span>{b.stepTitles[3]}
+        </h3>
+        <div class="remembered" data-remembered hidden>
+          <Icon name="check" />
+          <span>{b.remembered}</span>
+          <button class="link" type="button" data-forget>{b.forget}</button>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label class="field__label" for="firstName">{b.firstName}</label>
+            <input class="input" id="firstName" name="firstName" type="text" autocomplete="given-name" enterkeyhint="next" maxlength="80" required aria-describedby="firstName-error" />
+            <p class="field__error" id="firstName-error" data-error></p>
+          </div>
+          <div class="field">
+            <label class="field__label" for="lastName">{b.lastName}</label>
+            <input class="input" id="lastName" name="lastName" type="text" autocomplete="family-name" enterkeyhint="next" maxlength="80" required aria-describedby="lastName-error" />
+            <p class="field__error" id="lastName-error" data-error></p>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field__label" for="phone">{b.phone}</label>
+          <input class="input tabular" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" enterkeyhint="next" maxlength="24" required aria-describedby="phone-hint phone-error" />
+          <p class="field__hint" id="phone-hint">{b.phoneHint}</p>
+          <p class="field__error" id="phone-error" data-error></p>
+        </div>
+        <div class="field">
+          <label class="field__label" for="email">{b.email}</label>
+          <input class="input" id="email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="next" maxlength="160" required aria-describedby="email-error" />
+          <p class="field__error" id="email-error" data-error></p>
+        </div>
+        <div class="field">
+          <label class="field__label" for="message">{b.message} <span class="muted">({b.optional})</span></label>
+          <textarea class="input input--area" id="message" name="message" rows="3" maxlength="1000" placeholder={b.messagePh}></textarea>
+        </div>
+        <label class="check">
+          <input type="checkbox" name="remember" data-remember aria-describedby="remember-hint" />
+          <span>
+            {b.remember}
+            <span class="check__hint" id="remember-hint">{b.rememberHint}</span>
+          </span>
+        </label>
+      </div>
+
+      <!-- 5. Récapitulatif -->
+      <div class="step" data-step="5" role="group" aria-labelledby="step-5-title">
+        <h3 class="step__title" id="step-5-title" tabindex="-1">
+          <span class="step__kicker">{b.steps[4]}</span>{b.stepTitles[4]}
+        </h3>
+        <div class="summary">
+          <div class="summary__group">
+            <div class="summary__head">
+              <h4>{b.summary.trip}</h4>
+              <button class="summary__edit" type="button" data-goto="1" aria-label={fmt(b.summary.editLabel, { section: b.summary.trip })}>{b.summary.edit}</button>
+            </div>
+            <div class="summary__route">
+              <p><span class="dot dot--dep" aria-hidden="true"></span><span data-sum="departure"></span></p>
+              <p><span class="dot dot--dest" aria-hidden="true"></span><span data-sum="destination"></span></p>
+            </div>
+            <p class="summary__meta tabular" data-sum="estimate"></p>
+          </div>
+          <div class="summary__group">
+            <div class="summary__head">
+              <h4>{b.summary.when}</h4>
+              <button class="summary__edit" type="button" data-goto="2" aria-label={fmt(b.summary.editLabel, { section: b.summary.when })}>{b.summary.edit}</button>
+            </div>
+            <p data-sum="when"></p>
+          </div>
+          <div class="summary__group">
+            <div class="summary__head">
+              <h4>{b.summary.party}</h4>
+              <button class="summary__edit" type="button" data-goto="3" aria-label={fmt(b.summary.editLabel, { section: b.summary.party })}>{b.summary.edit}</button>
+            </div>
+            <p data-sum="party"></p>
+          </div>
+          <div class="summary__group">
+            <div class="summary__head">
+              <h4>{b.summary.contact}</h4>
+              <button class="summary__edit" type="button" data-goto="4" aria-label={fmt(b.summary.editLabel, { section: b.summary.contact })}>{b.summary.edit}</button>
+            </div>
+            <p data-sum="name"></p>
+            <p class="summary__meta" data-sum="reach"></p>
+          </div>
+          <div class="summary__group" data-sum-group="message" hidden>
+            <div class="summary__head">
+              <h4>{b.summary.message}</h4>
+              <button class="summary__edit" type="button" data-goto="4" aria-label={fmt(b.summary.editLabel, { section: b.summary.message })}>{b.summary.edit}</button>
+            </div>
+            <p class="summary__message" data-sum="message"></p>
+          </div>
+        </div>
+
+        <label class="check check--consent">
+          <input type="checkbox" id="consent" name="consent" required aria-describedby="consent-error" />
+          <span>
+            {b.consentA}<a class="link" href={pathFor('privacy', lang)} target="_blank" rel="noopener">{b.consentLink}<span class="sr-only"> {d.a11y.newTab}</span></a>{b.consentB}
+          </span>
+        </label>
+        <p class="field__error" id="consent-error" data-error></p>
+        <p class="request-note"><Icon name="info" />{b.requestNote}</p>
+      </div>
+
+      <div class="alert" role="alert" data-alert hidden>
+        <Icon name="alert" />
+        <div>
+          <p data-alert-text></p>
+          <div class="alert__actions" data-alert-actions hidden>
+            <a class="btn btn--sm btn--ghost" href={site.phone.href}><Icon name="phone" />{phoneDisplay}</a>
+            <a class="btn btn--sm btn--ghost" href={`mailto:${site.email}`} data-alert-mailto><Icon name="mail" />{b.emailInstead}</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="booking__nav">
+        <button class="btn btn--ghost booking__back" type="button" data-back hidden>
+          <Icon name="arrowLeft" /><span>{b.back}</span>
+        </button>
+        <button class="btn btn--primary booking__next" type="submit" data-next>
+          <span data-next-label>{b.next}</span>
+          <Icon name="arrowRight" class="btn__arrow" />
+          <span class="booking__progressbar" aria-hidden="true"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="done" data-done hidden tabindex="-1" aria-labelledby="done-title">
+    <svg class="done__check" viewBox="0 0 52 52" aria-hidden="true" focusable="false">
+      <circle cx="26" cy="26" r="24" pathLength="1" />
+      <path d="m16 27 7 7 13-14" pathLength="1" />
+    </svg>
+    <span class="badge glass done__status"><span class="badge__dot" aria-hidden="true"></span>{b.done.status}</span>
+    <h3 class="done__title" id="done-title" data-done-title>{b.done.title}</h3>
+    <p class="done__text" data-done-text hidden>{b.done.mailtoText}</p>
+    <dl class="done__details">
+      <div class="done__ref-row"><dt>{b.done.ref}</dt><dd class="done__ref tabular" data-done="ref"></dd></div>
+      <div><dt>{b.departure}</dt><dd data-done="departure"></dd></div>
+      <div><dt>{b.destination}</dt><dd data-done="destination"></dd></div>
+      <div><dt>{b.date}</dt><dd data-done="date"></dd></div>
+      <div><dt>{b.time}</dt><dd class="tabular" data-done="time"></dd></div>
+    </dl>
+    <p class="done__driver">{b.done.driver}</p>
+    <p class="done__ack muted" data-done-ack hidden>{b.done.emailCopy}</p>
+    <div class="done__actions">
+      <button class="btn btn--primary btn--sm" type="button" data-mailto-retry hidden><Icon name="mail" />{b.done.mailtoRetry}</button>
+      <button class="btn btn--ghost btn--sm" type="button" data-ics><Icon name="calendar" />{b.done.addCalendar}</button>
+      <button class="btn btn--ghost btn--sm" type="button" data-share><Icon name="share" /><span data-share-label>{b.done.share}</span></button>
+      <button class="link done__new" type="button" data-new>{b.done.newRequest}</button>
+    </div>
+  </div>
+
+  <noscript>
+    <p class="booking__noscript">{b.noscript}</p>
+  </noscript>
+
+  <script type="application/json" id="booking-config" set:html={JSON.stringify(config)} />
+</section>
+
+<script>
+  import '../scripts/booking';
+</script>

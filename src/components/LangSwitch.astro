@@ -1,0 +1,27 @@
+---
+import { t, languages, pathFor, type Lang, type RouteKey } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  route: RouteKey;
+}
+const { lang, route } = Astro.props;
+const d = t(lang);
+---
+<div class="lang" role="group" aria-label={d.a11y.langSwitch}>
+  {languages.map((l) => {
+    const target = t(l);
+    return (
+      <a
+        href={pathFor(route, l)}
+        hreflang={l}
+        lang={l}
+        aria-current={l === lang ? 'true' : undefined}
+        data-lang-link={l}
+      >
+        <span aria-hidden="true">{target.short}</span>
+        <span class="sr-only">{target.label}</span>
+      </a>
+    );
+  })}
+</div>

@@ -1,0 +1,76 @@
+---
+import { site } from '../config/site';
+import { pathFor, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const L = site.legal;
+const fr = lang === 'fr';
+const todo = fr ? 'À compléter' : 'To be completed';
+const v = (x: string) => x || null;
+---
+<article class="prose">
+  <p class="label">{fr ? 'Informations légales' : 'Legal information'}</p>
+  <h1>{fr ? 'Mentions légales' : 'Legal notice'}</h1>
+  {fr ? (
+    <p>Conformément à l’article 6 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l’économie numérique, voici l’identité des intervenants du site.</p>
+  ) : (
+    <p>In accordance with French law no. 2004-575 of 21 June 2004 on confidence in the digital economy, the parties involved in this website are identified below. The French version of this notice prevails.</p>
+  )}
+
+  <h2>{fr ? 'Éditeur du site' : 'Publisher'}</h2>
+  <dl>
+    <div><dt>{fr ? 'Nom commercial' : 'Trading name'}</dt><dd>{site.name}</dd></div>
+    <div><dt>{fr ? 'Raison sociale' : 'Company name'}</dt><dd>{v(L.companyName) ?? <span class="todo">{todo}</span>}</dd></div>
+    <div><dt>{fr ? 'Forme juridique' : 'Legal form'}</dt><dd>{v(L.legalForm) ?? <span class="todo">{todo}</span>}</dd></div>
+    <div><dt>{fr ? 'Adresse' : 'Address'}</dt><dd>{v(L.address) ?? <span class="todo">{todo}</span>}</dd></div>
+    <div><dt>SIRET</dt><dd>{v(L.siret) ?? <span class="todo">{todo}</span>}</dd></div>
+    {L.vatNumber && <div><dt>{fr ? 'TVA intracommunautaire' : 'VAT number'}</dt><dd>{L.vatNumber}</dd></div>}
+    {L.taxiLicence && <div><dt>{fr ? 'Autorisation de stationnement' : 'Taxi licence'}</dt><dd>{L.taxiLicence}</dd></div>}
+    <div><dt>{fr ? 'Téléphone' : 'Phone'}</dt><dd><a href={site.phone.href}>{fr ? site.phone.display : site.phone.international}</a></dd></div>
+    <div><dt>Email</dt><dd><a href={`mailto:${site.email}`}>{site.email}</a></dd></div>
+    <div><dt>{fr ? 'Directeur de la publication' : 'Publication director'}</dt><dd>{v(L.publicationDirector) ?? <span class="todo">{todo}</span>}</dd></div>
+  </dl>
+
+  <h2>{fr ? 'Hébergement' : 'Hosting'}</h2>
+  <dl>
+    <div><dt>{fr ? 'Hébergeur' : 'Host'}</dt><dd>GitHub, Inc. (GitHub Pages)</dd></div>
+    <div><dt>{fr ? 'Adresse' : 'Address'}</dt><dd>88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, {fr ? 'États-Unis' : 'United States'}</dd></div>
+    <div><dt>{fr ? 'Site' : 'Website'}</dt><dd><a href="https://pages.github.com" rel="noopener">pages.github.com</a></dd></div>
+  </dl>
+  <p>
+    {fr
+      ? 'Les demandes de réservation sont transmises par un service d’envoi hébergé chez Cloudflare, Inc. (101 Townsend St, San Francisco, CA 94107, États-Unis) et acheminées par le service d’emails Resend (resend.com).'
+      : 'Booking requests are passed on by a sending service hosted by Cloudflare, Inc. (101 Townsend St, San Francisco, CA 94107, United States) and delivered by the Resend email service (resend.com).'}
+  </p>
+
+  <h2>{fr ? 'Médiation de la consommation' : 'Consumer mediation'}</h2>
+  <p>
+    {fr
+      ? 'Conformément aux articles L.612-1 et suivants du Code de la consommation, le client peut recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable d’un litige.'
+      : 'Under articles L.612-1 et seq. of the French Consumer Code, clients may refer a dispute free of charge to a consumer mediator for an amicable settlement.'}
+  </p>
+  <dl>
+    <div><dt>{fr ? 'Médiateur' : 'Mediator'}</dt><dd>{v(L.mediator) ?? <span class="todo">{todo}</span>}</dd></div>
+  </dl>
+
+  <h2>{fr ? 'Propriété intellectuelle' : 'Intellectual property'}</h2>
+  <p>
+    {fr
+      ? 'L’ensemble des contenus de ce site (textes, identité visuelle, logo, mise en page) est la propriété de Taxi Saint Irénée, sauf mention contraire. Toute reproduction sans autorisation préalable est interdite.'
+      : 'All content on this website (text, visual identity, logo, layout) is the property of Taxi Saint Irénée unless otherwise stated. Any reproduction without prior permission is prohibited.'}
+  </p>
+  <p>
+    {fr
+      ? 'Polices de caractères : Geist (licence SIL Open Font License) et Instrument Serif (licence SIL Open Font License), hébergées avec le site.'
+      : 'Typefaces: Geist (SIL Open Font License) and Instrument Serif (SIL Open Font License), self-hosted with the site.'}
+  </p>
+
+  <h2>{fr ? 'Données personnelles' : 'Personal data'}</h2>
+  <p>
+    {fr ? 'Le traitement des données transmises via le formulaire est décrit dans la ' : 'How data sent through the form is processed is described in the '}
+    <a href={pathFor('privacy', lang)}>{fr ? 'politique de confidentialité' : 'privacy policy'}</a>.
+  </p>
+</article>

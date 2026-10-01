@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { t, pathFor } from '../i18n';
+import { site } from '../config/site';
+
+const fr = t('fr');
+const en = t('en');
+---
+<Base lang="fr" route="home" title={fr.notFound.title} noindex standalone>
+  <div class="page container">
+    <div class="prose">
+      <p class="label">404</p>
+      <h1>{fr.notFound.title}</h1>
+      <p>{fr.notFound.text}</p>
+      <p lang="en" class="muted">{en.notFound.title}. {en.notFound.text}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem">
+        <a class="btn btn--primary" href={pathFor('home', 'fr')}>{fr.notFound.back}<Icon name="arrowRight" class="btn__arrow" /></a>
+        <a class="btn btn--ghost" href={pathFor('home', 'en')} lang="en" hreflang="en">{en.notFound.back}</a>
+        <a class="btn btn--ghost" href={site.phone.href}><Icon name="phone" />{site.phone.display}</a>
+      </div>
+    </div>
+  </div>
+</Base>

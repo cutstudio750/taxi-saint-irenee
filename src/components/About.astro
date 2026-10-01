@@ -1,0 +1,91 @@
+---
+import { t, type Lang } from '../i18n';
+import { site } from '../config/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+---
+<section class="section section--soft about" id={d.ids.about} aria-labelledby="about-title">
+  <div class="container about__grid">
+    <div class="about__year" aria-hidden="true" data-reveal>
+      <span class="about__since">{lang === 'fr' ? 'Depuis' : 'Since'}</span>
+      <span class="about__num serif">{site.foundingYear}</span>
+    </div>
+
+    <div class="about__body">
+      <div data-reveal>
+        <p class="label"><span class="label__index">03</span>{d.about.label}</p>
+        <h2 class="h2 about__title" id="about-title">{d.about.title}</h2>
+      </div>
+      <div class="about__text" data-reveal style="--d:120ms">
+        <p class="lead">{d.about.p1}</p>
+        <p>{d.about.p2}</p>
+      </div>
+      <dl class="about__facts">
+        {d.about.facts.map((f, i) => (
+          <div data-reveal style={`--d:${200 + i * 100}ms`}>
+            <dt>{f.label}</dt>
+            <dd class="tabular">{f.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about__grid {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 5rem);
+  }
+  .about__year {
+    display: grid;
+    align-content: start;
+    gap: 0.25rem;
+  }
+  .about__since {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .about__num {
+    font-size: clamp(6.5rem, 3rem + 16vw, 15rem);
+    line-height: 0.82;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+  }
+  .about__title { margin-top: 1.25rem; }
+  .about__text { display: grid; gap: 1.1rem; margin-top: clamp(1.75rem, 3vw, 2.5rem); max-width: 40rem; }
+  .about__text p:not(.lead) { color: var(--muted); }
+  .about__facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  }
+  .about__facts > div {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line-strong);
+  }
+  .about__facts dt { font-size: 0.8125rem; color: var(--muted); line-height: 1.4; }
+  .about__facts dd {
+    margin: 0;
+    font-size: clamp(1.5rem, 1.2rem + 1.3vw, 2.25rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  @media (min-width: 64rem) {
+    .about__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; }
+    .about__year { position: sticky; top: 7rem; }
+  }
+</style>

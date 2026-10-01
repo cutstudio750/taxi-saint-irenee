@@ -1,0 +1,198 @@
+---
+import Icon from './Icon.astro';
+import Booking from './Booking.astro';
+import { t, type Lang } from '../i18n';
+import { site } from '../config/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+
+// Lignes abstraites : la Saône et le Rhône qui se rejoignent (la confluence lyonnaise).
+const saone = Array.from({ length: 9 }, (_, i) => {
+  const dx = i * 15;
+  const ex = 930 + i * 4;
+  return `M${380 + dx} -20 C${360 + dx} 170 ${610 + dx} 250 ${585 + dx * 0.8} 410 S${870 + dx * 0.4} 640 ${ex} 760 L${ex} 940`;
+});
+const rhone = Array.from({ length: 9 }, (_, j) => {
+  const dy = j * 15;
+  const ex = 970 + j * 4;
+  return `M1480 ${110 + dy} C1270 ${150 + dy} 1190 ${350 + dy} 1110 ${470 + dy * 0.7} S${990 + j * 2} 650 ${ex} 760 L${ex} 940`;
+});
+---
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__bg" aria-hidden="true">
+    <div class="hero__glow hero__glow--a"></div>
+    <div class="hero__glow hero__glow--b"></div>
+    <svg class="hero__lines" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" focusable="false">
+      <g fill="none" stroke="currentColor" stroke-width="1.1">
+        {saone.map((p, i) => <path d={p} pathLength="1" style={`--i:${i}`} />)}
+        {rhone.map((p, i) => <path d={p} pathLength="1" style={`--i:${i + 2}`} />)}
+      </g>
+    </svg>
+  </div>
+
+  <div class="container hero__grid">
+    <div class="hero__content">
+      <div class="hero__meta" style="--d:0ms">
+        <span class="label">{d.hero.label}</span>
+        <span class="badge glass"><span class="badge__dot" aria-hidden="true"></span>{d.hero.since}</span>
+      </div>
+
+      <h1 class="hero__title" id="hero-title" style="--d:90ms">
+        <span class="sr-only">{site.name} — </span>
+        {d.hero.titleA}
+        <span class="serif hero__title-em">{d.hero.titleB}</span>
+      </h1>
+
+      <p class="lead hero__lead" style="--d:180ms">{d.hero.lead}</p>
+
+      <div class="hero__actions" id="hero-actions" style="--d:260ms">
+        <a class="btn btn--primary btn--lg" href={`#${d.ids.booking}`} data-book>
+          {d.hero.ctaBook}<Icon name="arrowRight" class="btn__arrow" />
+        </a>
+        <a class="btn btn--glass btn--lg tabular" href={site.phone.href} aria-label={d.a11y.callAria}>
+          <Icon name="phone" />{lang === 'fr' ? site.phone.display : site.phone.international}
+        </a>
+      </div>
+
+      <ul class="hero__reassure" role="list" style="--d:340ms">
+        {d.hero.reassure.map((r) => (
+          <li><Icon name="check" />{r}</li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="hero__booking" style="--d:220ms">
+      <Booking lang={lang} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    padding-top: calc(var(--header-offset) + clamp(2.25rem, 7vw, 5.5rem));
+    padding-bottom: clamp(3.5rem, 8vw, 6.5rem);
+  }
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+    mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  }
+  .hero__glow {
+    position: absolute;
+    border-radius: 50%;
+  }
+  .hero__glow--a {
+    width: 70vmax; height: 70vmax;
+    right: -25vmax; top: -30vmax;
+    background: radial-gradient(closest-side, rgba(138, 111, 77, 0.13), transparent);
+  }
+  .hero__glow--b {
+    width: 60vmax; height: 60vmax;
+    left: -30vmax; bottom: -35vmax;
+    background: radial-gradient(closest-side, rgba(12, 12, 13, 0.06), transparent);
+  }
+  @media (prefers-color-scheme: dark) {
+    .hero__glow--a { background: radial-gradient(closest-side, rgba(196, 167, 125, 0.1), transparent); }
+    .hero__glow--b { background: radial-gradient(closest-side, rgba(255, 255, 255, 0.05), transparent); }
+  }
+  .hero__lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    color: var(--ink);
+    opacity: 0.11;
+  }
+  @media (prefers-color-scheme: dark) { .hero__lines { opacity: 0.16; } }
+  .hero__lines path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__lines path {
+      stroke-dashoffset: 1;
+      animation: draw 2.6s var(--ease-out) forwards;
+      animation-delay: calc(200ms + var(--i) * 70ms);
+    }
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+
+  .hero__grid {
+    display: grid;
+    gap: clamp(2.75rem, 6vw, 4rem);
+    align-items: center;
+  }
+  .hero__content { max-width: 44rem; }
+  .hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.9rem;
+    margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  }
+  .hero__title {
+    font-size: clamp(2.75rem, 1.15rem + 6.9vw, 5.75rem);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+    font-weight: 500;
+  }
+  .hero__title-em {
+    display: block;
+    font-size: 1.1em;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .hero__lead { margin-top: clamp(1.25rem, 2.5vw, 1.75rem); max-width: 31em; }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: clamp(1.75rem, 3.5vw, 2.5rem);
+  }
+  .hero__reassure {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+  .hero__reassure li { display: inline-flex; align-items: center; gap: 0.45rem; }
+  .hero__reassure :global(svg) { width: 1rem; height: 1rem; flex: none; color: var(--ink); }
+
+  @media (max-width: 29.99rem) {
+    .hero__actions .btn { flex: 1 1 100%; }
+  }
+
+  @media (min-width: 64rem) {
+    /* Ancré en haut : le panneau grandit vers le bas sans déplacer le titre. */
+    .hero { min-height: min(100svh, 62rem); padding-top: calc(var(--header-offset) + clamp(3rem, 9vh, 7rem)); }
+    .hero__grid { grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); gap: clamp(3rem, 5vw, 6rem); align-items: start; }
+    .hero__content { padding-top: 1rem; }
+    .hero__title { font-size: clamp(3.5rem, 0.6rem + 5.4vw, 6.25rem); }
+  }
+
+  /* Entrée : l'ordre d'apparition suit la hiérarchie de lecture. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .hero__meta,
+    :global(.js) .hero__title,
+    :global(.js) .hero__lead,
+    :global(.js) .hero__actions,
+    :global(.js) .hero__reassure,
+    :global(.js) .hero__booking {
+      animation: rise 1s var(--ease-out) both;
+      animation-delay: var(--d);
+    }
+  }
+</style>

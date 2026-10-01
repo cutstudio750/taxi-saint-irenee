@@ -1,0 +1,153 @@
+---
+import Icon from './Icon.astro';
+import { t, fmt, type Lang } from '../i18n';
+import { site } from '../config/site';
+import { reviews } from '../data/reviews';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const r = d.reviews;
+
+const count = reviews.length;
+const average = count ? reviews.reduce((s, x) => s + x.rating, 0) / count : 0;
+const avgText = new Intl.NumberFormat(d.locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(average);
+const sorted = [...reviews].sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));
+const dateFmt = new Intl.DateTimeFormat(d.locale, { month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+const leaveHref = site.googleReviewUrl || `mailto:${site.email}?subject=${encodeURIComponent(r.leaveEmailSubject)}`;
+const leaveExternal = !!site.googleReviewUrl;
+---
+<section class="section section--soft reviews" id={d.ids.reviews} aria-labelledby="reviews-title">
+  <div class="container">
+    <div class="section__head section__head--split" data-reveal>
+      <p class="label"><span class="label__index">07</span>{r.label}</p>
+      <h2 class="h2" id="reviews-title">{r.title}</h2>
+    </div>
+
+    {count === 0 ? (
+      <div class="reviews__empty glass" data-reveal>
+        <div class="reviews__score" aria-hidden="true">
+          <span class="reviews__avg">—</span>
+          <span class="stars stars--empty">
+            {Array.from({ length: 5 }, () => <Icon name="star" />)}
+          </span>
+        </div>
+        <div class="reviews__empty-body">
+          <h3 class="h3">{r.emptyTitle}</h3>
+          <p>{r.emptyText}</p>
+        </div>
+        <a
+          class="btn btn--primary"
+          href={leaveHref}
+          {...(leaveExternal ? { target: '_blank', rel: 'noopener' } : {})}
+        >
+          {r.leave}
+          {leaveExternal && <span class="sr-only">{d.a11y.newTab}</span>}
+          <Icon name="arrowRight" class="btn__arrow" />
+        </a>
+      </div>
+    ) : (
+      <div class="reviews__wrap">
+        <div class="reviews__summary" data-reveal>
+          <p class="reviews__avg tabular">{avgText}</p>
+          <p class="stars" role="img" aria-label={fmt(d.a11y.stars, { n: avgText })}>
+            {Array.from({ length: 5 }, (_, i) => (
+              <span class:list={['star', { 'is-on': i < Math.round(average) }]}><Icon name="star" /></span>
+            ))}
+          </p>
+          <p class="muted">
+            {r.average} · {fmt(count > 1 ? r.countMany : r.countOne, { n: count })}
+          </p>
+          <a class="btn btn--ghost" href={leaveHref} {...(leaveExternal ? { target: '_blank', rel: 'noopener' } : {})}>
+            {r.leave}
+            {leaveExternal && <span class="sr-only">{d.a11y.newTab}</span>}
+          </a>
+        </div>
+        <ul class="reviews__list" role="list">
+          {sorted.map((rev, i) => (
+            <li class="review" data-reveal style={`--d:${(i % 3) * 80}ms`}>
+              <figure>
+                <p class="stars stars--sm" role="img" aria-label={fmt(d.a11y.stars, { n: rev.rating })}>
+                  {Array.from({ length: 5 }, (_, k) => (
+                    <span class:list={['star', { 'is-on': k < rev.rating }]}><Icon name="star" /></span>
+                  ))}
+                </p>
+                <blockquote lang={rev.lang}>
+                  <p>{rev.text}</p>
+                </blockquote>
+                <figcaption>
+                  <strong>{rev.author}</strong>
+                  {rev.date && (
+                    <time datetime={rev.date}>{dateFmt.format(new Date(`${rev.date}T12:00:00Z`))}</time>
+                  )}
+                  {rev.source && <span>{fmt(r.via, { source: rev.source })}</span>}
+                </figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .reviews__empty {
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+    border-radius: var(--radius-lg);
+    --glass-top: rgba(255, 255, 255, 0.7);
+    --glass-bottom: rgba(255, 255, 255, 0.5);
+  }
+  @media (prefers-color-scheme: dark) {
+    .reviews__empty { --glass-top: rgba(34, 34, 37, 0.7); --glass-bottom: rgba(22, 22, 24, 0.55); }
+  }
+  .reviews__score { display: flex; align-items: center; gap: 1rem; }
+  .reviews__avg {
+    font-size: clamp(2.75rem, 2rem + 3vw, 4.5rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .reviews__empty-body p { margin-top: 0.4rem; color: var(--muted); max-width: 34em; }
+  .reviews__empty .btn { justify-self: start; }
+  .stars { display: inline-flex; gap: 0.15rem; color: var(--ink); }
+  .stars :global(svg) { width: 1.1rem; height: 1.1rem; }
+  .stars--empty { color: var(--line-strong); }
+  .star { color: var(--line-strong); }
+  .star.is-on { color: var(--accent); }
+  .star.is-on :global(svg) { fill: currentColor; }
+  .stars--sm :global(svg) { width: 0.95rem; height: 0.95rem; }
+
+  .reviews__wrap { display: grid; gap: 2.5rem; }
+  .reviews__summary { display: grid; gap: 0.6rem; align-content: start; justify-items: start; }
+  .reviews__summary .btn { margin-top: 1rem; }
+  .reviews__list { display: grid; gap: 1rem; }
+  .review figure {
+    display: grid;
+    gap: 1rem;
+    height: 100%;
+    margin: 0;
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .review blockquote { margin: 0; font-size: 1rem; line-height: 1.6; color: var(--ink-2); }
+  .review figcaption { display: flex; flex-wrap: wrap; gap: 0.35rem 0.75rem; font-size: 0.875rem; color: var(--muted); }
+  .review figcaption strong { color: var(--ink); font-weight: 500; }
+
+  @media (min-width: 48rem) {
+    .reviews__empty { grid-template-columns: auto minmax(0, 1fr) auto; gap: 2.5rem; }
+    .reviews__score { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    .reviews__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 64rem) {
+    .reviews__wrap { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 3rem; }
+  }
+</style>

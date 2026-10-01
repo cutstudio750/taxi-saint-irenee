@@ -1,0 +1,67 @@
+---
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+---
+<section class="section how" id={d.ids.how} aria-labelledby="how-title">
+  <div class="container">
+    <div class="section__head section__head--split" data-reveal>
+      <p class="label"><span class="label__index">02</span>{d.how.label}</p>
+      <h2 class="h2" id="how-title">{d.how.title}</h2>
+    </div>
+    <ol class="how__steps" role="list">
+      {d.how.steps.map((st, i) => (
+        <li class="how__step" data-reveal style={`--d:${i * 140}ms`}>
+          <span class="how__num tabular" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <h3 class="h3">{st.title}</h3>
+          <p>{st.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .how { padding-top: clamp(3rem, 7vw, 6rem); }
+  .how__steps {
+    display: grid;
+    gap: 2.25rem;
+    counter-reset: step;
+  }
+  .how__step {
+    position: relative;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+  /* Le trait se dessine dans l'ordre des étapes : il matérialise la séquence. */
+  .how__step::before {
+    content: '';
+    position: absolute;
+    left: 0; top: -1px;
+    width: 100%; height: 1px;
+    background: var(--ink);
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  :global(.js) .how__step[data-reveal]::before {
+    transform: scaleX(0);
+    transition: transform 1.2s var(--ease-out);
+    transition-delay: calc(var(--d, 0ms) + 200ms);
+  }
+  :global(.js) .how__step.is-in::before { transform: scaleX(1); }
+  .how__num {
+    display: block;
+    margin-bottom: 1.5rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .how__step p { margin-top: 0.6rem; color: var(--muted); max-width: 26em; }
+  @media (min-width: 48rem) {
+    .how__steps { grid-template-columns: repeat(3, 1fr); gap: clamp(1.5rem, 3vw, 3rem); }
+  }
+</style>

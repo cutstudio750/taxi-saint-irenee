@@ -1,0 +1,135 @@
+---
+import { site } from '../config/site';
+import { pathFor, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const mail = `mailto:${site.email}`;
+const updated = '1er octobre 2026';
+const updatedEn = '1 October 2026';
+---
+{lang === 'fr' ? (
+  <article class="prose">
+    <p class="label">RGPD</p>
+    <h1>Politique de confidentialité</h1>
+    <p>Taxi Saint Irénée ne collecte que les informations nécessaires pour traiter votre demande de trajet. Le site n’utilise ni cookie publicitaire, ni outil de mesure d’audience, ni pixel de suivi.</p>
+
+    <h2>Responsable du traitement</h2>
+    <p>Taxi Saint Irénée, Lyon — <a href={mail}>{site.email}</a> — {site.phone.display}. Coordonnées complètes dans les <a href={pathFor('legal', 'fr')}>mentions légales</a>.</p>
+
+    <h2>Données collectées</h2>
+    <p>Uniquement via le formulaire de réservation, et uniquement lorsque vous l’envoyez :</p>
+    <ul>
+      <li>trajet : adresse de départ, destination, date, heure ;</li>
+      <li>voyage : nombre de passagers et de bagages ;</li>
+      <li>coordonnées : prénom, nom, téléphone, email ;</li>
+      <li>informations complémentaires que vous choisissez d’ajouter (facultatif).</li>
+    </ul>
+    <p>Merci de ne pas indiquer d’informations sensibles (santé, etc.) dans le champ libre.</p>
+
+    <h2>Finalités et base légale</h2>
+    <p>Ces données servent exclusivement à traiter votre demande, à vous recontacter pour la confirmer et à organiser le trajet. Le traitement repose sur l’exécution de mesures précontractuelles prises à votre demande (article 6.1.b du RGPD). Elles ne sont jamais vendues, ni utilisées à des fins publicitaires.</p>
+
+    <h2>Destinataires et sous-traitants</h2>
+    <p>Seul Taxi Saint Irénée a accès à vos demandes. Pour les acheminer, nous faisons appel à des prestataires techniques :</p>
+    <ul>
+      <li>Cloudflare, Inc. — fonction d’envoi sécurisée (transit des données, sans conservation du contenu de la demande) ;</li>
+      <li>Resend — acheminement de l’email de réservation ;</li>
+      <li>Google (Gmail) — boîte de réception de l’entreprise ;</li>
+      <li>GitHub, Inc. — hébergement du site (journaux techniques incluant l’adresse IP, à des fins de sécurité).</li>
+    </ul>
+    <p>Ces prestataires peuvent traiter des données hors de l’Union européenne ; ces transferts sont encadrés par le cadre de protection des données UE–États-Unis (Data Privacy Framework) et/ou les clauses contractuelles types de la Commission européenne.</p>
+
+    <h2>Suggestions d’adresses et estimation du trajet</h2>
+    <p>Pour vous proposer des adresses et afficher une distance et une durée indicatives, le texte saisi dans les champs « Départ » et « Destination » ainsi que les coordonnées des lieux sélectionnés sont envoyés à la Géoplateforme, service public de l’IGN (France). Aucune donnée d’identité n’est transmise à ce service.</p>
+    <p>La fonction « Ma position actuelle » n’est utilisée que si vous la sélectionnez et l’autorisez dans votre navigateur. Votre position sert uniquement à retrouver l’adresse correspondante ; elle n’est pas conservée.</p>
+
+    <h2>Durées de conservation</h2>
+    <ul>
+      <li>Demande non suivie d’un trajet : 3 ans au maximum après le dernier contact.</li>
+      <li>Demande donnant lieu à un trajet : durée de la relation commerciale, puis 3 ans.</li>
+      <li>Pièces comptables éventuelles : 10 ans, conformément aux obligations légales.</li>
+    </ul>
+
+    <h2>Données stockées sur votre appareil</h2>
+    <p>Le site n’utilise pas de cookie. Il peut enregistrer dans votre navigateur :</p>
+    <ul>
+      <li>votre choix de langue ;</li>
+      <li>vos coordonnées, uniquement si vous cochez « Mémoriser mes coordonnées sur cet appareil ». Elles ne quittent pas votre navigateur et peuvent être effacées à tout moment via le bouton « Effacer » du formulaire ;</li>
+      <li>une copie technique de certaines pages, pour permettre l’affichage du numéro de téléphone hors connexion.</li>
+    </ul>
+    <p>Ces éléments sont strictement nécessaires au service ou demandés par vous : aucun bandeau de consentement n’est donc requis.</p>
+
+    <h2>Vos droits</h2>
+    <p>Vous disposez d’un droit d’accès, de rectification, d’effacement, de limitation, d’opposition et de portabilité de vos données. Pour l’exercer, écrivez à <a href={mail}>{site.email}</a>. Une réponse vous sera apportée dans un délai d’un mois.</p>
+    <p>Vous pouvez également introduire une réclamation auprès de la CNIL : <a href="https://www.cnil.fr" rel="noopener">www.cnil.fr</a>, 3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07.</p>
+
+    <h2>Sécurité</h2>
+    <p>Le site est servi exclusivement en HTTPS. Les clés techniques permettant l’envoi des emails ne sont jamais exposées dans le site : elles sont conservées côté serveur.</p>
+
+    <p class="updated">Dernière mise à jour : {updated}.</p>
+  </article>
+) : (
+  <article class="prose">
+    <p class="label">GDPR</p>
+    <h1>Privacy policy</h1>
+    <p>Taxi Saint Irénée only collects the information needed to handle your ride request. The website uses no advertising cookies, no analytics and no tracking pixels.</p>
+
+    <h2>Data controller</h2>
+    <p>Taxi Saint Irénée, Lyon — <a href={mail}>{site.email}</a> — {site.phone.international}. Full details in the <a href={pathFor('legal', 'en')}>legal notice</a>.</p>
+
+    <h2>Data collected</h2>
+    <p>Only through the booking form, and only when you send it:</p>
+    <ul>
+      <li>route: pick-up address, destination, date, time;</li>
+      <li>trip: number of passengers and pieces of luggage;</li>
+      <li>contact details: first name, last name, phone, email;</li>
+      <li>any additional information you choose to add (optional).</li>
+    </ul>
+    <p>Please do not include sensitive information (health, etc.) in the free-text field.</p>
+
+    <h2>Purposes and legal basis</h2>
+    <p>This data is used solely to handle your request, contact you to confirm it and organise the ride. Processing is based on steps taken at your request prior to entering into a contract (Article 6(1)(b) GDPR). It is never sold or used for advertising.</p>
+
+    <h2>Recipients and processors</h2>
+    <p>Only Taxi Saint Irénée has access to your requests. To deliver them, we rely on technical providers:</p>
+    <ul>
+      <li>Cloudflare, Inc. — secure sending function (data in transit, request content is not stored);</li>
+      <li>Resend — delivery of the booking email;</li>
+      <li>Google (Gmail) — the company’s mailbox;</li>
+      <li>GitHub, Inc. — website hosting (technical logs including IP addresses, for security purposes).</li>
+    </ul>
+    <p>These providers may process data outside the European Union; such transfers are covered by the EU–US Data Privacy Framework and/or the European Commission’s standard contractual clauses.</p>
+
+    <h2>Address suggestions and trip estimate</h2>
+    <p>To suggest addresses and show an approximate distance and duration, the text typed in the “Pick-up” and “Destination” fields and the coordinates of the selected places are sent to the Géoplateforme, a French public service run by IGN. No identity data is sent to this service.</p>
+    <p>The “My current location” feature is only used if you select it and allow it in your browser. Your location is only used to find the matching address and is not stored.</p>
+
+    <h2>Retention periods</h2>
+    <ul>
+      <li>Request not followed by a ride: up to 3 years after the last contact.</li>
+      <li>Request leading to a ride: for the duration of the business relationship, then 3 years.</li>
+      <li>Any accounting records: 10 years, as required by law.</li>
+    </ul>
+
+    <h2>Data stored on your device</h2>
+    <p>The website does not use cookies. It may store in your browser:</p>
+    <ul>
+      <li>your language choice;</li>
+      <li>your contact details, only if you tick “Remember my details on this device”. They never leave your browser and can be cleared at any time with the form’s “Clear” button;</li>
+      <li>a technical copy of some pages, so the phone number can be displayed offline.</li>
+    </ul>
+    <p>These items are strictly necessary or requested by you, so no consent banner is required.</p>
+
+    <h2>Your rights</h2>
+    <p>You have the right to access, rectify, erase, restrict, object to and port your data. To exercise these rights, email <a href={mail}>{site.email}</a>. You will receive an answer within one month.</p>
+    <p>You may also lodge a complaint with the French data protection authority (CNIL): <a href="https://www.cnil.fr/en" rel="noopener">www.cnil.fr</a>.</p>
+
+    <h2>Security</h2>
+    <p>The website is served over HTTPS only. The technical keys used to send emails are never exposed on the website: they are kept server-side.</p>
+
+    <p class="updated">Last updated: {updatedEn}. The French version of this policy prevails.</p>
+  </article>
+)}

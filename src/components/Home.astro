@@ -1,0 +1,28 @@
+---
+import Hero from './Hero.astro';
+import How from './How.astro';
+import About from './About.astro';
+import Services from './Services.astro';
+import Vehicle from './Vehicle.astro';
+import Trust from './Trust.astro';
+import Reviews from './Reviews.astro';
+import Zone from './Zone.astro';
+import Faq from './Faq.astro';
+import Contact from './Contact.astro';
+import type { Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+---
+<Hero lang={lang} />
+<How lang={lang} />
+<About lang={lang} />
+<Services lang={lang} />
+<Vehicle lang={lang} />
+<Trust lang={lang} />
+<Reviews lang={lang} />
+<Zone lang={lang} />
+<Faq lang={lang} />
+<Contact lang={lang} />

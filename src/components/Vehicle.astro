@@ -1,0 +1,176 @@
+---
+import { Picture } from 'astro:assets';
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const v = d.vehicle;
+
+/**
+ * PHOTOS DU VÉHICULE
+ * Déposer les vraies photos dans src/assets/vehicle/ avec ces noms exacts :
+ *   exterieur.jpg  ·  interieur.jpg  ·  coffre.jpg   (jpg, jpeg, png ou webp)
+ * Elles sont automatiquement converties en AVIF / WebP, redimensionnées et chargées en différé.
+ * Sans fichier, un emplacement clairement identifié est affiché.
+ */
+const files = import.meta.glob<{ default: ImageMetadata }>('../assets/vehicle/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG}', {
+  eager: true,
+});
+const findPhoto = (slot: string) =>
+  Object.entries(files).find(([path]) => path.split('/').pop()!.split('.')[0].toLowerCase() === slot)?.[1].default;
+
+const slots = (['exterieur', 'interieur', 'coffre'] as const).map((slot) => ({
+  slot,
+  title: v.photos[slot],
+  alt: v.photos.alt[slot],
+  img: findPhoto(slot),
+}));
+---
+<section class="section theme-ink vehicle" id={d.ids.vehicle} aria-labelledby="vehicle-title">
+  <div class="vehicle__light" aria-hidden="true"></div>
+  <div class="container">
+    <div class="section__head section__head--split" data-reveal>
+      <p class="label"><span class="label__index">05</span>{v.label}</p>
+      <h2 class="h2" id="vehicle-title">{v.title}</h2>
+      <p class="lead">{v.lead}</p>
+    </div>
+
+    <div class="gallery">
+      {slots.map((s, i) => (
+        <figure class:list={['frame', `frame--${s.slot}`]} data-reveal style={`--d:${i * 120}ms`}>
+          {s.img ? (
+            <Picture
+              src={s.img}
+              formats={['avif', 'webp']}
+              widths={i === 0 ? [640, 960, 1400, 1920] : [480, 720, 960]}
+              sizes={i === 0 ? '(min-width: 64rem) 60vw, 100vw' : '(min-width: 64rem) 30vw, 50vw'}
+              alt={s.alt}
+              loading="lazy"
+              decoding="async"
+              class="frame__img"
+            />
+          ) : (
+            <div class="frame__placeholder">
+              <span class="frame__corner frame__corner--tl" aria-hidden="true"></span>
+              <span class="frame__corner frame__corner--tr" aria-hidden="true"></span>
+              <span class="frame__corner frame__corner--bl" aria-hidden="true"></span>
+              <span class="frame__corner frame__corner--br" aria-hidden="true"></span>
+              <p>
+                <span class="frame__pending">{v.photos.pending}</span>
+                <span class="frame__note">{v.photos.note}</span>
+              </p>
+            </div>
+          )}
+          <figcaption class="frame__caption">{s.title}</figcaption>
+        </figure>
+      ))}
+    </div>
+
+    <ul class="features" role="list">
+      {v.features.map((f, i) => (
+        <li data-reveal style={`--d:${(i % 3) * 90}ms`}>
+          <h3 class="h3">{f.title}</h3>
+          <p>{f.text}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .vehicle { overflow: hidden; isolation: isolate; }
+  .vehicle__light {
+    position: absolute;
+    z-index: -1;
+    left: 50%; top: -30%;
+    width: 90vmax; height: 60vmax;
+    transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(196, 167, 125, 0.09), transparent);
+    pointer-events: none;
+  }
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  .frame {
+    position: relative;
+    grid-column: span 1;
+    margin: 0;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: linear-gradient(160deg, #1b1b1e, #111113);
+    box-shadow: inset 0 0 0 1px var(--line);
+    aspect-ratio: 4 / 5;
+  }
+  .frame--exterieur { grid-column: 1 / -1; aspect-ratio: 16 / 10; }
+  .frame :global(.frame__img), .frame :global(picture) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .frame__placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .frame__placeholder p { display: grid; gap: 0.4rem; max-width: 20rem; }
+  .frame__pending { font-size: 0.9375rem; font-weight: 500; color: var(--ink-2); }
+  .frame__note { font-size: 0.75rem; line-height: 1.5; color: var(--muted); }
+  .frame--interieur .frame__note, .frame--coffre .frame__note { display: none; }
+  .frame__corner {
+    position: absolute;
+    width: 1rem; height: 1rem;
+    border-color: var(--line-strong);
+    border-style: solid;
+    border-width: 0;
+  }
+  .frame__corner--tl { top: 1rem; left: 1rem; border-top-width: 1px; border-left-width: 1px; }
+  .frame__corner--tr { top: 1rem; right: 1rem; border-top-width: 1px; border-right-width: 1px; }
+  .frame__corner--bl { bottom: 1rem; left: 1rem; border-bottom-width: 1px; border-left-width: 1px; }
+  .frame__corner--br { bottom: 1rem; right: 1rem; border-bottom-width: 1px; border-right-width: 1px; }
+  .frame__caption {
+    position: absolute;
+    left: 0.75rem; top: 0.75rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    background: rgba(20, 20, 22, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    backdrop-filter: blur(12px) saturate(160%);
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem 1.25rem;
+    margin-top: clamp(3rem, 6vw, 4.5rem);
+  }
+  .features li { padding-top: 1rem; border-top: 1px solid var(--line); }
+  .features p { margin-top: 0.35rem; font-size: 0.9375rem; color: var(--muted); }
+
+  @media (min-width: 48rem) {
+    .features { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.5rem 2rem; }
+  }
+  @media (min-width: 64rem) {
+    .gallery {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      grid-template-rows: 1fr 1fr;
+      gap: 1rem;
+    }
+    .frame--exterieur { grid-column: 1; grid-row: 1 / span 2; aspect-ratio: auto; min-height: 34rem; }
+    .frame--interieur, .frame--coffre { aspect-ratio: auto; }
+    .frame--interieur .frame__note, .frame--coffre .frame__note { display: block; }
+  }
+</style>

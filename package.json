@@ -1,0 +1,27 @@
+{
+  "name": "taxi-saint-irenee",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site officiel de Taxi Saint Irénée — taxi à Lyon depuis 2014.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20.3.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "brand": "node scripts/generate-brand.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/geist": "^5.2.0",
+    "@fontsource/instrument-serif": "^5.2.0",
+    "astro": "^5.13.0",
+    "sharp": "^0.34.0"
+  },
+  "devDependencies": {
+    "@fontsource/geist": "^5.2.0",
+    "opentype.js": "^1.3.4"
+  }
+}

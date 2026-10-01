@@ -1,0 +1,75 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import LangSwitch from './LangSwitch.astro';
+import { t, pathFor, sectionHref, type Lang, type RouteKey } from '../i18n';
+import { site } from '../config/site';
+
+interface Props {
+  lang: Lang;
+  route: RouteKey;
+  onHome?: boolean;
+}
+const { lang, route, onHome: onHomeProp } = Astro.props;
+const d = t(lang);
+const onHome = onHomeProp ?? route === 'home';
+const s = (id: string) => sectionHref(lang, id, onHome);
+
+const links = [
+  { id: d.ids.services, label: d.nav.services },
+  { id: d.ids.vehicle, label: d.nav.vehicle },
+  { id: d.ids.about, label: d.nav.about },
+  { id: d.ids.reviews, label: d.nav.reviews },
+  { id: d.ids.contact, label: d.nav.contact },
+];
+---
+<header class="site-header" data-header>
+  <nav class="nav glass" aria-label={d.a11y.mainNav}>
+    <Logo href={pathFor('home', lang)} label={d.a11y.home} />
+
+    <ul class="nav__links" role="list">
+      {links.map((l) => (
+        <li><a href={s(l.id)} data-nav-link={l.id}>{l.label}</a></li>
+      ))}
+    </ul>
+
+    <div class="nav__end">
+      <LangSwitch lang={lang} route={route} />
+      <a class="btn btn--primary btn--sm nav__book" href={s(d.ids.booking)} data-book>{d.nav.book}</a>
+      <button
+        class="menu-btn"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-menu-btn
+        data-label-open={d.a11y.menuOpen}
+        data-label-close={d.a11y.menuClose}
+      >
+        <span class="sr-only" data-menu-label>{d.a11y.menuOpen}</span>
+        <span class="menu-btn__icon" aria-hidden="true"><span></span><span></span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu glass" id="mobile-menu" data-menu inert>
+    <ul role="list">
+      {links.map((l) => (
+        <li>
+          <a href={s(l.id)} data-menu-link>
+            {l.label}
+            <Icon name="chevronRight" />
+          </a>
+        </li>
+      ))}
+    </ul>
+    <div class="mobile-menu__foot">
+      <div class="mobile-menu__actions">
+        <a class="btn btn--ghost" href={site.phone.href} aria-label={d.a11y.callAria}>
+          <Icon name="phone" />{d.nav.call}
+        </a>
+        <a class="btn btn--primary" href={s(d.ids.booking)} data-book data-menu-link>{d.nav.book}</a>
+      </div>
+      <LangSwitch lang={lang} route={route} />
+    </div>
+  </div>
+</header>

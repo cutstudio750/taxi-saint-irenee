@@ -1,0 +1,21 @@
+---
+import Icon from './Icon.astro';
+import { t, sectionHref, type Lang, type RouteKey } from '../i18n';
+import { site } from '../config/site';
+
+interface Props {
+  lang: Lang;
+  route: RouteKey;
+  onHome?: boolean;
+}
+const { lang, route, onHome: onHomeProp } = Astro.props;
+const d = t(lang);
+---
+<div class="action-bar glass" role="region" aria-label={d.a11y.quickActions} data-action-bar>
+  <a class="btn btn--glass" href={site.phone.href} aria-label={d.a11y.callAria}>
+    <Icon name="phone" />{d.nav.call}
+  </a>
+  <a class="btn btn--primary" href={sectionHref(lang, d.ids.booking, onHomeProp ?? route === 'home')} data-book>
+    {d.nav.book}<Icon name="arrowRight" class="btn__arrow" />
+  </a>
+</div>

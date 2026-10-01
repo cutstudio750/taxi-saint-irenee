@@ -1,0 +1,34 @@
+---
+interface Props {
+  kind: 'departure' | 'destination';
+  label: string;
+  placeholder: string;
+}
+const { kind, label, placeholder } = Astro.props;
+---
+<div class={`field addr addr--${kind}`} data-addr={kind}>
+  <div class="addr__box">
+    <span class="addr__marker" aria-hidden="true"></span>
+    <label class="addr__label" for={kind}>{label}</label>
+    <input
+      class="input addr__input"
+      id={kind}
+      name={kind}
+      type="text"
+      role="combobox"
+      aria-autocomplete="list"
+      aria-expanded="false"
+      aria-controls={`${kind}-list`}
+      aria-describedby={`${kind}-error`}
+      autocomplete="off"
+      autocapitalize="off"
+      spellcheck="false"
+      enterkeyhint={kind === 'departure' ? 'next' : 'go'}
+      maxlength="200"
+      placeholder={placeholder}
+      required
+    />
+    <ul class="addr__list" id={`${kind}-list`} role="listbox" aria-label={label} hidden></ul>
+  </div>
+  <p class="field__error" id={`${kind}-error`} data-error></p>
+</div>
