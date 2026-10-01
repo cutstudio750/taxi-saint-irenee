@@ -4,6 +4,7 @@
 name = "taxi-saint-irenee-booking"
 main = "src/index.ts"
 compatibility_date = "2026-09-01"
+workers_dev = true
 
 # Variables NON secrètes (les secrets se définissent avec `npx wrangler secret put`).
 [vars]
